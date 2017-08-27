@@ -1,19 +1,26 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, img)
-import Html.Attributes exposing (src)
+import Html exposing (Html, text, div, img, button)
+import Html.Attributes exposing (src, attribute)
+import Html.Events exposing (onClick)
+import Element
 
 
 ---- MODEL ----
 
 
+cseId : Element.Cx
+cseId =
+    "010757224930445905488:hydkhs9fcca"
+
+
 type alias Model =
-    {}
+    { cseId : String }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { cseId = "" }, Cmd.none )
 
 
 
@@ -21,12 +28,18 @@ init =
 
 
 type Msg
-    = NoOp
+    = CseInit Element.Cx
+    | CseReady Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        CseInit id ->
+            ( { model | cseId = id }, Element.init id )
+
+        CseReady flag ->
+            ( model, Cmd.none )
 
 
 
@@ -38,7 +51,21 @@ view model =
     div []
         [ img [ src "/logo.svg" ] []
         , div [] [ text "Your Elm App is working!" ]
+        , button [ onClick (CseInit cseId) ] [ text "init CSE" ]
+        , div [ attribute "id" "cse-search" ] []
         ]
+
+
+
+---- SUBSCRIPTIONS ----
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    if String.isEmpty model.cseId then
+        Sub.none
+    else
+        Element.ready CseReady
 
 
 

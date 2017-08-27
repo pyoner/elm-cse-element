@@ -1,4 +1,6 @@
 import './main.css';
 import { Main } from './Main.elm';
+import { init } from './element-port.js';
 
-Main.embed(document.getElementById('root'));
+const app = Main.embed(document.getElementById('root'));
+init(app);
