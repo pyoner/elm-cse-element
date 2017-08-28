@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, text, div, img, button)
-import Html.Attributes exposing (src, attribute)
+import Html.Attributes exposing (src, attribute, disabled)
 import Html.Events exposing (onClick)
 import Element
 
@@ -52,7 +52,11 @@ view model =
     div []
         [ img [ src "/logo.svg" ] []
         , div [] [ text "Your Elm App is working!" ]
-        , button [ onClick (CseInit cseId) ] [ text "init CSE" ]
+        , button
+            [ onClick (CseInit cseId)
+            , disabled model.cseReady
+            ]
+            [ text "init CSE" ]
         , div [ attribute "id" "cse-search" ] []
         ]
 
@@ -79,5 +83,5 @@ main =
         { view = view
         , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
