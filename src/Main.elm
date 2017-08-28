@@ -15,12 +15,13 @@ cseId =
 
 
 type alias Model =
-    { cseId : String }
+    { cseReady : Bool
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { cseId = "" }, Cmd.none )
+    ( { cseReady = False }, Cmd.none )
 
 
 
@@ -36,10 +37,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         CseInit id ->
-            ( { model | cseId = id }, Element.init id )
+            ( model, Element.init id )
 
         CseReady flag ->
-            ( model, Cmd.none )
+            ( { model | cseReady = flag }, Cmd.none )
 
 
 
@@ -62,10 +63,10 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if String.isEmpty model.cseId then
-        Sub.none
-    else
+    if model.cseReady == False then
         Element.ready CseReady
+    else
+        Sub.none
 
 
 
