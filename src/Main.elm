@@ -50,9 +50,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ img [ src "/logo.svg" ] []
-        , div [] [ text "Your Elm App is working!" ]
-        , button
+        [ button
             [ onClick (CseInit cseId)
             , disabled model.cseReady
             ]
