@@ -19,7 +19,7 @@ cseElementId =
     "search-cse"
 
 
-cseGname : Element.Name
+cseGname : Element.Gname
 cseGname =
     "test"
 
@@ -42,10 +42,10 @@ init =
 type Msg
     = CseInit Element.Cx
     | CseReady Bool
-    | CseRender Element.Name String
-    | CseClearResults Element.Name
-    | CsePrefillQuery Element.Name Element.Query
-    | CseExecute Element.Name Element.Query
+    | CseRender Element.Gname String
+    | CseClearResults Element.Gname
+    | CsePrefillQuery Element.Gname Element.Query
+    | CseExecute Element.Gname Element.Query
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

@@ -13,7 +13,7 @@ port module Element
         , clearAllResults
         , Cx
         , Element
-        , Name
+        , Gname
         , Query
         , Attributes
         )
@@ -29,7 +29,7 @@ type alias Element =
     }
 
 
-type alias Name =
+type alias Gname =
     String
 
 
@@ -39,7 +39,7 @@ type alias Query =
 
 type alias Attributes =
     { --General
-      gname : Name
+      gname : Gname
     , autoSearchOnLoad : Bool
     , enableHistory : Bool
     , queryParameterName : String
@@ -102,7 +102,7 @@ type alias Attributes =
 type alias Config =
     { div : String
     , tag : String
-    , gname : Name
+    , gname : Gname
     , attributes : Maybe Attributes
     }
 
@@ -125,16 +125,16 @@ port getElement : String -> Cmd msg
 port aboutElement : (Element -> msg) -> Sub msg
 
 
-port execute : ( Name, Query ) -> Cmd msg
+port execute : ( Gname, Query ) -> Cmd msg
 
 
-port prefillQuery : ( Name, Query ) -> Cmd msg
+port prefillQuery : ( Gname, Query ) -> Cmd msg
 
 
-port getInputQuery : Name -> Cmd msg
+port getInputQuery : Gname -> Cmd msg
 
 
-port inputQuery : ({ gname : Name, query : Query } -> msg) -> Sub msg
+port inputQuery : ({ gname : Gname, query : Query } -> msg) -> Sub msg
 
 
-port clearAllResults : Name -> Cmd msg
+port clearAllResults : Gname -> Cmd msg
