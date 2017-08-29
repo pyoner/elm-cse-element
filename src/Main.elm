@@ -44,6 +44,7 @@ type Msg
     | CseReady Bool
     | CseRender Element.Name String
     | CseClearResults Element.Name
+    | CsePrefillQuery Element.Name Element.Query
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,6 +71,9 @@ update msg model =
         CseClearResults gname ->
             ( model, Element.clearAllResults gname )
 
+        CsePrefillQuery gname query ->
+            ( model, Element.prefillQuery ( gname, query ) )
+
 
 
 ---- VIEW ----
@@ -90,12 +94,14 @@ view model =
             [ text "render CSE" ]
         , button
             [ onClick (CseClearResults cseGname)
-            , disabled
-                (not
-                    model.cseIsRendred
-                )
+            , disabled (not model.cseIsRendred)
             ]
             [ text "clear search results" ]
+        , button
+            [ onClick (CsePrefillQuery cseGname "elm-lang")
+            , disabled (not model.cseIsRendred)
+            ]
+            [ text "prefill query" ]
         , div [ attribute "id" cseElementId ] []
         ]
 
