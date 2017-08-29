@@ -45,6 +45,7 @@ type Msg
     | CseRender Element.Name String
     | CseClearResults Element.Name
     | CsePrefillQuery Element.Name Element.Query
+    | CseExecute Element.Name Element.Query
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,6 +75,9 @@ update msg model =
         CsePrefillQuery gname query ->
             ( model, Element.prefillQuery ( gname, query ) )
 
+        CseExecute gname query ->
+            ( model, Element.execute ( gname, query ) )
+
 
 
 ---- VIEW ----
@@ -102,6 +106,11 @@ view model =
             , disabled (not model.cseIsRendred)
             ]
             [ text "prefill query" ]
+        , button
+            [ onClick (CseExecute cseGname "ethereum")
+            , disabled (not model.cseIsRendred)
+            ]
+            [ text "execute query" ]
         , div [ attribute "id" cseElementId ] []
         ]
 
