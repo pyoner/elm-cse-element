@@ -103,7 +103,7 @@ type alias Config =
     { div : String
     , tag : String
     , gname : Name
-    , attributes : Attributes
+    , attributes : Maybe Attributes
     }
 
 
@@ -113,7 +113,7 @@ port init : Cx -> Cmd msg
 port ready : (Bool -> msg) -> Sub msg
 
 
-port render : ( Config, Config ) -> Cmd msg
+port render : ( Config, Maybe Config ) -> Cmd msg
 
 
 port go : String -> Cmd msg
