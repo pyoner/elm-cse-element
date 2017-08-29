@@ -19,14 +19,20 @@ cseElementId =
     "search-cse"
 
 
+cseGname : Element.Name
+cseGname =
+    "test"
+
+
 type alias Model =
-    { cseReady : Bool
+    { cseIsReady : Bool
+    , cseIsRendred : Bool
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { cseReady = False }, Cmd.none )
+    ( { cseIsReady = False, cseIsRendred = False }, Cmd.none )
 
 
 
@@ -36,7 +42,8 @@ init =
 type Msg
     = CseInit Element.Cx
     | CseReady Bool
-    | CseRender String
+    | CseRender Element.Name String
+    | CseClearResults Element.Name
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -46,19 +53,22 @@ update msg model =
             ( model, Element.init id )
 
         CseReady flag ->
-            ( { model | cseReady = flag }, Cmd.none )
+            ( { model | cseIsReady = flag }, Cmd.none )
 
-        CseRender elementId ->
-            ( model
+        CseRender gname elementId ->
+            ( { model | cseIsRendred = True }
             , Element.render
                 ( { div = elementId
                   , tag = "search"
-                  , gname = "test"
+                  , gname = gname
                   , attributes = Nothing
                   }
                 , Nothing
                 )
             )
+
+        CseClearResults gname ->
+            ( model, Element.clearAllResults gname )
 
 
 
@@ -70,14 +80,22 @@ view model =
     div []
         [ button
             [ onClick (CseInit cseId)
-            , disabled model.cseReady
+            , disabled model.cseIsReady
             ]
             [ text "init CSE" ]
         , button
-            [ onClick (CseRender cseElementId)
-            , disabled (not model.cseReady)
+            [ onClick (CseRender cseGname cseElementId)
+            , disabled (not model.cseIsReady || model.cseIsRendred)
             ]
             [ text "render CSE" ]
+        , button
+            [ onClick (CseClearResults cseGname)
+            , disabled
+                (not
+                    model.cseIsRendred
+                )
+            ]
+            [ text "clear search results" ]
         , div [ attribute "id" cseElementId ] []
         ]
 
@@ -88,7 +106,7 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if model.cseReady == False then
+    if model.cseIsReady == False then
         Element.ready CseReady
     else
         Sub.none
