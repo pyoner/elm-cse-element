@@ -27,12 +27,18 @@ cseGname =
 type alias Model =
     { cseIsReady : Bool
     , cseIsRendred : Bool
+    , cseContainerFlag : Bool
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { cseIsReady = False, cseIsRendred = False }, Cmd.none )
+    ( { cseIsReady = False
+      , cseIsRendred = False
+      , cseContainerFlag = False
+      }
+    , Cmd.none
+    )
 
 
 
@@ -46,6 +52,8 @@ type Msg
     | CseClearResults Element.Gname
     | CsePrefillQuery Element.Gname Element.Query
     | CseExecute Element.Gname Element.Query
+    | CseDestroyContainer
+    | CseCreateContainer
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -78,9 +86,24 @@ update msg model =
         CseExecute gname query ->
             ( model, Element.execute ( gname, query ) )
 
+        --create/destroy container
+        CseDestroyContainer ->
+            ( { model | cseContainerFlag = False, cseIsRendred = False }, Cmd.none )
+
+        CseCreateContainer ->
+            ( { model | cseContainerFlag = True }, Cmd.none )
+
 
 
 ---- VIEW ----
+
+
+containerView : String -> Model -> Html Msg
+containerView id model =
+    if not model.cseContainerFlag then
+        text ""
+    else
+        div [ attribute "id" id ] []
 
 
 view : Model -> Html Msg
@@ -92,8 +115,17 @@ view model =
             ]
             [ text "init CSE" ]
         , button
+            [ onClick (CseCreateContainer)
+            , disabled (not model.cseIsReady || model.cseContainerFlag)
+            ]
+            [ text "create container" ]
+        , button
             [ onClick (CseRender cseGname cseElementId)
-            , disabled (not model.cseIsReady || model.cseIsRendred)
+            , disabled
+                (not model.cseIsReady
+                    || model.cseIsRendred
+                    || not model.cseContainerFlag
+                )
             ]
             [ text "render CSE" ]
         , button
@@ -111,7 +143,12 @@ view model =
             , disabled (not model.cseIsRendred)
             ]
             [ text "execute query" ]
-        , div [ attribute "id" cseElementId ] []
+        , button
+            [ onClick (CseDestroyContainer)
+            , disabled (not model.cseIsRendred)
+            ]
+            [ text "destroy container" ]
+        , containerView cseElementId model
         ]
 
 
