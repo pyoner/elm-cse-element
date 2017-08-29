@@ -14,6 +14,11 @@ cseId =
     "010757224930445905488:hydkhs9fcca"
 
 
+cseElementId : String
+cseElementId =
+    "search-cse"
+
+
 type alias Model =
     { cseReady : Bool
     }
@@ -31,6 +36,7 @@ init =
 type Msg
     = CseInit Element.Cx
     | CseReady Bool
+    | CseRender String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -41,6 +47,18 @@ update msg model =
 
         CseReady flag ->
             ( { model | cseReady = flag }, Cmd.none )
+
+        CseRender elementId ->
+            ( model
+            , Element.render
+                ( { div = elementId
+                  , tag = "search"
+                  , gname = "test"
+                  , attributes = Nothing
+                  }
+                , Nothing
+                )
+            )
 
 
 
@@ -55,7 +73,12 @@ view model =
             , disabled model.cseReady
             ]
             [ text "init CSE" ]
-        , div [ attribute "id" "cse-search" ] []
+        , button
+            [ onClick (CseRender cseElementId)
+            , disabled (not model.cseReady)
+            ]
+            [ text "render CSE" ]
+        , div [ attribute "id" cseElementId ] []
         ]
 
 
