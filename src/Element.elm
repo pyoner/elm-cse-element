@@ -134,7 +134,7 @@ port prefillQuery : ( Gname, Query ) -> Cmd msg
 port getInputQuery : Gname -> Cmd msg
 
 
-port inputQuery : ({ gname : Gname, query : Query } -> msg) -> Sub msg
+port inputQuery : (( Gname, Query ) -> msg) -> Sub msg
 
 
 port clearAllResults : Gname -> Cmd msg

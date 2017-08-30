@@ -59,7 +59,7 @@ export function init(app) {
     app.ports.getInputQuery.subscribe(function(gname) {
         const element = google.search.cse.element.getElement(gname);
         const query = element.getInputQuery();
-        app.ports.inputQuery.send({ gname: gname, query: query });
+        app.ports.inputQuery.send([gname, query]);
     });
 
     app.ports.clearAllResults.subscribe(function(gname) {
