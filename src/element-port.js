@@ -34,6 +34,8 @@ export function init(app) {
     });
 
     app.ports.render.subscribe(function([componentConfig, opt_componentConfig]) {
+        const id = componentConfig.div;
+        document.getElementById(id).innerHTML = '';
         google.search.cse.element.render(componentConfig, opt_componentConfig);
     });
 

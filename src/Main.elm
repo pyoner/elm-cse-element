@@ -4,12 +4,13 @@ import Html exposing (Html, text, div, img, button)
 import Html.Attributes exposing (src, attribute, disabled)
 import Html.Events exposing (onClick)
 import Element
+import Types
 
 
 ---- MODEL ----
 
 
-cseId : Element.Cx
+cseId : Types.Cx
 cseId =
     "010757224930445905488:hydkhs9fcca"
 
@@ -19,7 +20,7 @@ cseElementId =
     "search-cse"
 
 
-cseGname : Element.Gname
+cseGname : Types.Gname
 cseGname =
     "test"
 
@@ -46,12 +47,12 @@ init =
 
 
 type Msg
-    = CseInit Element.Cx
+    = CseInit Types.Cx
     | CseReady Bool
-    | CseRender Element.Gname String
-    | CseClearResults Element.Gname
-    | CsePrefillQuery Element.Gname Element.Query
-    | CseExecute Element.Gname Element.Query
+    | CseRender Types.Gname String
+    | CseClearResults Types.Gname
+    | CsePrefillQuery Types.Gname Types.Query
+    | CseExecute Types.Gname Types.Query
     | CseDestroyContainer
     | CseCreateContainer
 
@@ -66,7 +67,7 @@ update msg model =
             ( { model | cseIsReady = flag }, Cmd.none )
 
         CseRender gname elementId ->
-            ( { model | cseIsRendred = True }
+            ( model
             , Element.render
                 ( { div = elementId
                   , tag = "search"
