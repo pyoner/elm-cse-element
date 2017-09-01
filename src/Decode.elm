@@ -1,4 +1,4 @@
-module Decode exposing (..)
+module Decode exposing (decoder)
 
 import Json.Decode exposing (..)
 import Types exposing (..)
