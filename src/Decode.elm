@@ -23,6 +23,28 @@ loadDecoders =
     )
 
 
+rendeDecoders : ( Decoder Event, Decoder Event )
+rendeDecoders =
+    ( map
+        (\gname -> Render (Ok gname))
+        string
+    , makeErrDecoder Render
+    )
+
+
+executeDecoders : ( Decoder Event, Decoder Event )
+executeDecoders =
+    ( map
+        (\pair -> Execute (Ok pair))
+        (map2
+            (\gname query -> ( gname, query ))
+            (index 0 string)
+            (index 1 string)
+        )
+    , makeErrDecoder Execute
+    )
+
+
 
 --Top level decoders
 
@@ -46,6 +68,11 @@ decoder =
             (\( event, flag ) ->
                 case event of
                     "Load" ->
+                        (index 2
+                            (selectDecoder flag loadDecoders)
+                        )
+
+                    "Render" ->
                         (index 2
                             (selectDecoder flag loadDecoders)
                         )

@@ -13,7 +13,7 @@ type alias Element =
 
 type Event
     = Load (Result String Cx)
-    | Render (Result String ( Config, Maybe Config ))
+    | Render (Result String Gname)
     | Execute (Result String ( Gname, Query ))
     | DecodeError String
 

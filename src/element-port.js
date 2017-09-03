@@ -1,5 +1,5 @@
 export function init(app) {
-    let event = app.ports.event;
+    const event = app.ports.event;
     app.ports.load.subscribe(function(cx) {
         // Insert it before the CSE code snippet so that cse.js can take the script
         // parameters, like parsetags, callbacks.
@@ -8,11 +8,11 @@ export function init(app) {
             callback: function() {
                 if (document.readyState == 'complete') {
                     // Document is ready when CSE element is initialized.
-                    event.send(["Load", 1, cx]);
+                    event.send(["Load", true, cx]);
                 } else {
                     // Document is not ready yet, when CSE element is initialized.
                     google.setOnLoadCallback(function() {
-                        event.send(["Load", 1, cx]);
+                        event.send(["Load", true, cx]);
                     }, true);
                 }
             }
@@ -24,7 +24,7 @@ export function init(app) {
             gcse.async = true;
             gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
             gcse.onerror = function(error) {
-                event.send(["Load", 0, "Can't load Script"]);
+                event.send(["Load", false, `Can't load script for ${cx}`]);
             }
             const s = document.getElementsByTagName('script')[0];
             s.parentNode.insertBefore(gcse, s);
@@ -34,7 +34,13 @@ export function init(app) {
     app.ports.render.subscribe(function([componentConfig, opt_componentConfig]) {
         const id = componentConfig.div;
         document.getElementById(id).innerHTML = '';
-        google.search.cse.element.render(componentConfig, opt_componentConfig);
+        try {
+            google.search.cse.element.render(componentConfig, opt_componentConfig);
+        } catch (e) {
+            event.send(["Render", false, `Render error: ${e}`]);
+            return;
+        }
+        event.send(["Render", true, cx]);
     });
 
     app.ports.go.subscribe(function(opt_container) {
@@ -48,7 +54,13 @@ export function init(app) {
 
     app.ports.execute.subscribe(function([gname, query]) {
         const element = google.search.cse.element.getElement(gname);
+        try {
         element.execute(query);
+        } catch (e) {
+            event.send(["Execute", false, `Execute error: ${e}`]);
+            return;
+        }
+        event.send(["Execute", true, [gname, query]]);
     });
 
     app.ports.prefillQuery.subscribe(function([gname, query]) {
