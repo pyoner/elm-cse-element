@@ -53,9 +53,9 @@ export function init(app) {
     });
 
     app.ports.execute.subscribe(function([gname, query]) {
-        const element = google.search.cse.element.getElement(gname);
         try {
-        element.execute(query);
+            const element = google.search.cse.element.getElement(gname);
+            element.execute(query);
         } catch (e) {
             event.send(["Execute", false, `Execute error: ${e}`]);
             return;
@@ -64,10 +64,10 @@ export function init(app) {
     });
 
     app.ports.prefillQuery.subscribe(function([gname, query]) {
-        const element = google.search.cse.element.getElement(gname);
         try {
-        element.prefillQuery(query);
-        } catch (e){
+            const element = google.search.cse.element.getElement(gname);
+            element.prefillQuery(query);
+        } catch (e) {
             event.send(["PrefillQuery", false, `PrefillQuery error: ${e}`]);
             return;
         }
@@ -75,9 +75,14 @@ export function init(app) {
     });
 
     app.ports.getInputQuery.subscribe(function(gname) {
-        const element = google.search.cse.element.getElement(gname);
-        const query = element.getInputQuery();
-        app.ports.inputQuery.send([gname, query]);
+        try {
+            const element = google.search.cse.element.getElement(gname);
+            const query = element.getInputQuery();
+        } catch (e) {
+            event.send(["InputQuery", false, `getInputQuery error: ${e}`]);
+            return;
+        }
+        event.send(["InputQuery", true, [gname, query] ]);
     });
 
     app.ports.clearAllResults.subscribe(function(gname) {

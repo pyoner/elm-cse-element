@@ -9,7 +9,6 @@ port module Element
         , execute
         , prefillQuery
         , getInputQuery
-        , inputQuery
         , clearAllResults
         )
 
@@ -40,9 +39,6 @@ port prefillQuery : ( Gname, Query ) -> Cmd msg
 
 
 port getInputQuery : Gname -> Cmd msg
-
-
-port inputQuery : (( Gname, Query ) -> msg) -> Sub msg
 
 
 port clearAllResults : Gname -> Cmd msg

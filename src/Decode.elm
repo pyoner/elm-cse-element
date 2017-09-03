@@ -58,6 +58,19 @@ prefillQueryDecoders =
     )
 
 
+inputQueryDecoders : ( Decoder Event, Decoder Event )
+inputQueryDecoders =
+    ( map
+        (\pair -> InputQuery (Ok pair))
+        (map2
+            (\gname query -> ( gname, query ))
+            (index 0 string)
+            (index 1 string)
+        )
+    , makeErrDecoder InputQuery
+    )
+
+
 
 --Top level decoders
 
@@ -97,6 +110,9 @@ decoder =
 
                     "PrefillQuery" ->
                         valueDecoder flag prefillQueryDecoders
+
+                    "InputQuery" ->
+                        valueDecoder flag inputQueryDecoders
 
                     _ ->
                         fail <|

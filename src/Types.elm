@@ -16,6 +16,7 @@ type Event
     | Render (Result String Gname)
     | Execute (Result String ( Gname, Query ))
     | PrefillQuery (Result String ( Gname, Query ))
+    | InputQuery (Result String ( Gname, Query ))
     | DecodeError String
 
 
