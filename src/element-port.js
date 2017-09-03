@@ -1,8 +1,6 @@
 export function init(app) {
-    app.ports.init.subscribe(function(cx) {
-        function ready(flag) {
-            app.ports.ready.send(flag);
-        }
+    let event = app.ports.event;
+    app.ports.load.subscribe(function(cx) {
         // Insert it before the CSE code snippet so that cse.js can take the script
         // parameters, like parsetags, callbacks.
         window.__gcse = {
@@ -10,11 +8,11 @@ export function init(app) {
             callback: function() {
                 if (document.readyState == 'complete') {
                     // Document is ready when CSE element is initialized.
-                    ready(true);
+                    event.send(["Load", 1, cx]);
                 } else {
                     // Document is not ready yet, when CSE element is initialized.
                     google.setOnLoadCallback(function() {
-                        ready(true);
+                        event.send(["Load", 1, cx]);
                     }, true);
                 }
             }
@@ -26,7 +24,7 @@ export function init(app) {
             gcse.async = true;
             gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
             gcse.onerror = function(error) {
-                ready(false);
+                event.send(["Load", 0, "Can't load Script"]);
             }
             const s = document.getElementsByTagName('script')[0];
             s.parentNode.insertBefore(gcse, s);

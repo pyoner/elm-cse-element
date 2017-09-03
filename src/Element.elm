@@ -1,7 +1,7 @@
 port module Element
     exposing
-        ( init
-        , ready
+        ( load
+        , listen
         , render
         , go
         , getElement
@@ -14,16 +14,11 @@ port module Element
         )
 
 import Types exposing (..)
+import Decode exposing (decoder)
 import Json.Decode as Decode
 
 
-port init : Cx -> Cmd msg
-
-
-port ready : (Bool -> msg) -> Sub msg
-
-
-port event : (Decode.Value -> msg) -> Sub msg
+port load : Cx -> Cmd msg
 
 
 port render : ( Config, Maybe Config ) -> Cmd msg
@@ -51,3 +46,24 @@ port inputQuery : (( Gname, Query ) -> msg) -> Sub msg
 
 
 port clearAllResults : Gname -> Cmd msg
+
+
+
+-- Subscriptions
+
+
+port event : (Decode.Value -> msg) -> Sub msg
+
+
+listen : (Event -> msg) -> Sub msg
+listen tagger =
+    event
+        (\v ->
+            tagger <|
+                case (Decode.decodeValue decoder v) of
+                    Ok event ->
+                        event
+
+                    Err err ->
+                        DecodeError err
+        )
