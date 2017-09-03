@@ -71,6 +71,15 @@ inputQueryDecoders =
     )
 
 
+clearAllResultsDecoders : ( Decoder Event, Decoder Event )
+clearAllResultsDecoders =
+    ( map
+        (\gname -> ClearAllResults (Ok gname))
+        string
+    , makeErrDecoder ClearAllResults
+    )
+
+
 
 --Top level decoders
 

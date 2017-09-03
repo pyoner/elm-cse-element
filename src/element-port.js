@@ -82,12 +82,18 @@ export function init(app) {
             event.send(["InputQuery", false, `getInputQuery error: ${e}`]);
             return;
         }
-        event.send(["InputQuery", true, [gname, query] ]);
+        event.send(["InputQuery", true, [gname, query]]);
     });
 
     app.ports.clearAllResults.subscribe(function(gname) {
-        const element = google.search.cse.element.getElement(gname);
-        element.clearAllResults();
+        try {
+            const element = google.search.cse.element.getElement(gname);
+            element.clearAllResults();
+        } catch (e) {
+            event.send(["ClearAllResults", false, `clearAllResults error: ${e}`]);
+            return;
+        }
+        event.send(["ClearAllResults", true, gname]);
     });
 
 }

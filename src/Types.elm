@@ -11,13 +11,26 @@ type alias Element =
     }
 
 
+type alias Error =
+    String
+
+
+type alias QueryResult =
+    Result Error ( Gname, Query )
+
+
+type alias GnameResult =
+    Result String Gname
+
+
 type Event
-    = Load (Result String Cx)
-    | Render (Result String Gname)
-    | Execute (Result String ( Gname, Query ))
-    | PrefillQuery (Result String ( Gname, Query ))
-    | InputQuery (Result String ( Gname, Query ))
-    | DecodeError String
+    = Load (Result Error Cx)
+    | Render GnameResult
+    | ClearAllResults GnameResult
+    | Execute QueryResult
+    | PrefillQuery QueryResult
+    | InputQuery QueryResult
+    | DecodeError Error
 
 
 type alias Gname =
