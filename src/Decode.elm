@@ -4,7 +4,7 @@ import Json.Decode exposing (..)
 import Types exposing (..)
 
 
---Union Type decoders
+-- helpers decoders
 
 
 makeErrDecoder : (Result String b -> Event) -> Decoder Event
@@ -12,6 +12,32 @@ makeErrDecoder tagger =
     map
         (\err -> tagger (Err err))
         string
+
+
+makeQueryResultDecoders : (QueryResult -> Event) -> ( Decoder Event, Decoder Event )
+makeQueryResultDecoders tagger =
+    ( map
+        (\pair -> tagger (Ok pair))
+        (map2
+            (\gname query -> ( gname, query ))
+            (index 0 string)
+            (index 1 string)
+        )
+    , makeErrDecoder tagger
+    )
+
+
+makeGnameResultDecoders : (GnameResult -> Event) -> ( Decoder Event, Decoder Event )
+makeGnameResultDecoders tagger =
+    ( map
+        (\gname -> tagger (Ok gname))
+        string
+    , makeErrDecoder tagger
+    )
+
+
+
+--Union Type decoders
 
 
 loadDecoders : ( Decoder Event, Decoder Event )
@@ -23,61 +49,37 @@ loadDecoders =
     )
 
 
+
+--GnameResult decoders
+
+
 rendeDecoders : ( Decoder Event, Decoder Event )
 rendeDecoders =
-    ( map
-        (\gname -> Render (Ok gname))
-        string
-    , makeErrDecoder Render
-    )
-
-
-executeDecoders : ( Decoder Event, Decoder Event )
-executeDecoders =
-    ( map
-        (\pair -> Execute (Ok pair))
-        (map2
-            (\gname query -> ( gname, query ))
-            (index 0 string)
-            (index 1 string)
-        )
-    , makeErrDecoder Execute
-    )
-
-
-prefillQueryDecoders : ( Decoder Event, Decoder Event )
-prefillQueryDecoders =
-    ( map
-        (\pair -> PrefillQuery (Ok pair))
-        (map2
-            (\gname query -> ( gname, query ))
-            (index 0 string)
-            (index 1 string)
-        )
-    , makeErrDecoder PrefillQuery
-    )
-
-
-inputQueryDecoders : ( Decoder Event, Decoder Event )
-inputQueryDecoders =
-    ( map
-        (\pair -> InputQuery (Ok pair))
-        (map2
-            (\gname query -> ( gname, query ))
-            (index 0 string)
-            (index 1 string)
-        )
-    , makeErrDecoder InputQuery
-    )
+    makeGnameResultDecoders Render
 
 
 clearAllResultsDecoders : ( Decoder Event, Decoder Event )
 clearAllResultsDecoders =
-    ( map
-        (\gname -> ClearAllResults (Ok gname))
-        string
-    , makeErrDecoder ClearAllResults
-    )
+    makeGnameResultDecoders ClearAllResults
+
+
+
+--QueryResult decoders
+
+
+executeDecoders : ( Decoder Event, Decoder Event )
+executeDecoders =
+    makeQueryResultDecoders Execute
+
+
+prefillQueryDecoders : ( Decoder Event, Decoder Event )
+prefillQueryDecoders =
+    makeQueryResultDecoders PrefillQuery
+
+
+inputQueryDecoders : ( Decoder Event, Decoder Event )
+inputQueryDecoders =
+    makeQueryResultDecoders InputQuery
 
 
 
