@@ -45,6 +45,19 @@ executeDecoders =
     )
 
 
+prefillQueryDecoders : ( Decoder Event, Decoder Event )
+prefillQueryDecoders =
+    ( map
+        (\pair -> PrefillQuery (Ok pair))
+        (map2
+            (\gname query -> ( gname, query ))
+            (index 0 string)
+            (index 1 string)
+        )
+    , makeErrDecoder PrefillQuery
+    )
+
+
 
 --Top level decoders
 
@@ -55,6 +68,12 @@ selectDecoder flag ( okDecoder, errDecoder ) =
         okDecoder
     else
         errDecoder
+
+
+valueDecoder : Bool -> ( Decoder Event, Decoder Event ) -> Decoder Event
+valueDecoder flag decoders =
+    selectDecoder flag decoders
+        |> index 2
 
 
 decoder : Decoder Event
@@ -68,14 +87,16 @@ decoder =
             (\( event, flag ) ->
                 case event of
                     "Load" ->
-                        (index 2
-                            (selectDecoder flag loadDecoders)
-                        )
+                        valueDecoder flag loadDecoders
 
                     "Render" ->
-                        (index 2
-                            (selectDecoder flag loadDecoders)
-                        )
+                        valueDecoder flag rendeDecoders
+
+                    "Execute" ->
+                        valueDecoder flag executeDecoders
+
+                    "PrefillQuery" ->
+                        valueDecoder flag prefillQueryDecoders
 
                     _ ->
                         fail <|

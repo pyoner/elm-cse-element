@@ -65,7 +65,13 @@ export function init(app) {
 
     app.ports.prefillQuery.subscribe(function([gname, query]) {
         const element = google.search.cse.element.getElement(gname);
+        try {
         element.prefillQuery(query);
+        } catch (e){
+            event.send(["PrefillQuery", false, `PrefillQuery error: ${e}`]);
+            return;
+        }
+        event.send(["PrefillQuery", true, [gname, query]]);
     });
 
     app.ports.getInputQuery.subscribe(function(gname) {

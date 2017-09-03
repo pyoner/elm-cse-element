@@ -15,6 +15,7 @@ type Event
     = Load (Result String Cx)
     | Render (Result String Gname)
     | Execute (Result String ( Gname, Query ))
+    | PrefillQuery (Result String ( Gname, Query ))
     | DecodeError String
 
 
