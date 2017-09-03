@@ -7,15 +7,24 @@ import Types exposing (..)
 --Union Type decoders
 
 
+makeErrDecoder : (Result String b -> Event) -> Decoder Event
+makeErrDecoder tagger =
+    map
+        (\err -> tagger (Err err))
+        string
+
+
 loadDecoders : ( Decoder Event, Decoder Event )
 loadDecoders =
     ( map
         (\cx -> Load (Ok cx))
         string
-    , map
-        (\err -> Load (Err err))
-        string
+    , makeErrDecoder Load
     )
+
+
+
+--Top level decoders
 
 
 selectDecoder : Bool -> ( Decoder Event, Decoder Event ) -> Decoder Event
