@@ -17,30 +17,43 @@ import Decode exposing (decoder)
 import Json.Decode as Decode
 
 
+{-| Load a CSE script
+-}
 port load : Cx -> Cmd msg
 
 
+{-| Renders a CSE element
+-}
 port render : ( Config, Maybe Config ) -> Cmd msg
 
 
+{-| Renders all CSE tags/classes in the specified container
+-}
 port go : String -> Cmd msg
 
 
+{-| Gets the element object by gname
+-}
 port getElement : String -> Cmd msg
 
 
-port aboutElement : (Element -> msg) -> Sub msg
-
-
+{-| Executes a programmatic query
+-}
 port execute : ( Gname, Query ) -> Cmd msg
 
 
+{-| Prefills the searchbox with a query string without executing the query
+-}
 port prefillQuery : ( Gname, Query ) -> Cmd msg
 
 
+{-| Gets the current value displayed in the input box
+-}
 port getInputQuery : Gname -> Cmd msg
 
 
+{-| Clears the control by hiding everything but the search box, if any
+-}
 port clearAllResults : Gname -> Cmd msg
 
 
