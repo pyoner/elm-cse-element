@@ -47,7 +47,7 @@ init =
 
 
 type Msg
-    = CseInit Types.Cx
+    = CseLoad Types.Cx
     | CseReady Bool
     | CseRender Types.Gname String
     | CseClearResults Types.Gname
@@ -55,13 +55,14 @@ type Msg
     | CseExecute Types.Gname Types.Query
     | CseDestroyContainer
     | CseCreateContainer
+    | ElementEvent Types.Event
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        CseInit id ->
-            ( model, Element.init id )
+        CseLoad id ->
+            ( model, Element.load id )
 
         CseReady flag ->
             ( { model | cseIsReady = flag }, Cmd.none )
@@ -94,6 +95,19 @@ update msg model =
         CseCreateContainer ->
             ( { model | cseContainerFlag = True }, Cmd.none )
 
+        ElementEvent event ->
+            case event of
+                Types.Load result ->
+                    case result of
+                        Ok cx ->
+                            ( { model | cseIsReady = True }, Cmd.none )
+
+                        Err err ->
+                            ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 
 ---- VIEW ----
@@ -111,10 +125,10 @@ view : Model -> Html Msg
 view model =
     div []
         [ button
-            [ onClick (CseInit cseId)
+            [ onClick (CseLoad cseId)
             , disabled model.cseIsReady
             ]
-            [ text "init CSE" ]
+            [ text "load CSE" ]
         , button
             [ onClick (CseCreateContainer)
             , disabled (not model.cseIsReady || model.cseContainerFlag)
@@ -159,10 +173,7 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if model.cseIsReady == False then
-        Element.ready CseReady
-    else
-        Sub.none
+    Element.listen ElementEvent
 
 
 
