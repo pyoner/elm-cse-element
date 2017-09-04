@@ -5,9 +5,14 @@ type alias Cx =
     String
 
 
+type alias UIOptions =
+    {}
+
+
 type alias Element =
     { gname : String
-    , kind : String
+    , type_ : String
+    , uiOptions : UIOptions
     }
 
 
