@@ -5,7 +5,6 @@ port module Element
         , render
         , go
         , getElement
-        , aboutElement
         , execute
         , prefillQuery
         , getInputQuery
