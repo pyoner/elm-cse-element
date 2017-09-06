@@ -28,6 +28,11 @@ type alias GnameResult =
     Result String Gname
 
 
+type Size
+    = SizeInt Int
+    | SizeString String
+
+
 type Event
     = Load (Result Error Cx)
     | Render GnameResult
@@ -54,63 +59,224 @@ type alias Config =
     }
 
 
-type alias Attributes =
-    { --General
-      gname : Gname
+type alias General =
+    { gname : Gname
     , autoSearchOnLoad : Bool
-    , enableHistory : Bool
+    , enableHistory : Maybe Bool
     , queryParameterName : String
-    , resultsUrl : String
-    , newWindow :
-        Bool
-        --Autocomplete
-    , enableAutoComplete : Bool
-    , autoCompleteMatchType : String
-    , autoCompleteMaxCompletions : Int
-    , autoCompleteMaxPromotions : Int
-    , autoCompleteValidLanguages :
-        String
-        --Refinements
-    , defaultToRefinement : String
-    , refinementStyle :
-        String
-        -- Image search
-    , enableImageSearch : Bool
-    , defaultToImageSearch : Bool
-    , imageSearchResultSetSize : Int
-    , imageSearchLayout : String
-    , image_cr : String
-    , image_gl : String
-    , image_as_sitesearch : String
-    , image_as_oq : String
-    , image_sort_by : String
-    , image_filter :
-        String
-        --Web search
-    , disableWebSearch : Bool
-    , webSearchResultSetSize : Int
-    , webSearchSafesearch : String
-    , webSearchQueryAddition : String
-    , cr : String
-    , gl : String
-    , as_sitesearch : String
-    , as_oq : String
-    , sort_by : String
-    , filter :
-        String
-        --Search results
-    , enableOrderBy : Bool
-    , linkTarget : String
-    , noResultsString : String
-    , resultSetSize : Int
-    , safeSearch :
-        String
-        --Ads
-    , adchannel : String
-    , adclient : String
-    , adtest :
-        String
-        --Google Analytics
-    , gaCategoryParameter : String
-    , gaQueryParameter : String
+    , resultsUrl : Maybe String
+    , newWindow : Maybe Bool
+    }
+
+
+general =
+    { autoSearchOnLoad = True
+    , enableHistory = Nothing
+    , queryParameterName = "q"
+    , resultsUrl = Nothing
+    , newWindow = Nothing
+    }
+
+
+
+--enableAutoComplete : Bool
+
+
+type MatchType
+    = Any
+    | Ordered
+    | Prefix
+
+
+type alias Autocomplete =
+    { matchType : Maybe MatchType
+    , maxCompletions : Maybe Int
+    , maxPromotions : Maybe Int
+    , validLanguages : Maybe String
+    }
+
+
+autocomplete =
+    { matchType = Nothing
+    , maxCompletions = Nothing
+    , maxPromotions = Nothing
+    , validLanguages = Nothing
+    }
+
+
+
+--Refinements
+
+
+type RefinementStyle
+    = Tab
+    | Link
+
+
+type alias Refinements =
+    { default : Maybe String
+    , style : Maybe RefinementStyle
+    }
+
+
+refinements =
+    { default = Nothing
+    , style = Nothing
+    }
+
+
+
+--Image search
+--enableImageSearch : Bool
+--defaultToImageSearch : Bool
+
+
+type Layout
+    = Classic
+    | Column
+    | Popup
+
+
+type alias ImageSearch =
+    { resultSetSize : Size
+    , layout : Maybe Layout
+    , cr : Maybe String
+    , gl : Maybe String
+    , as_sitesearch : Maybe String
+    , as_oq : Maybe String
+    , sort_by : Maybe String
+    , filter : Maybe String
+    }
+
+
+imageSearch =
+    { resultSetSize = SizeInt 10
+    , layout = Nothing
+    , cr = Nothing
+    , gl = Nothing
+    , as_sitesearch = Nothing
+    , as_oq = Nothing
+    , sort_by = Nothing
+    , filter = Nothing
+    }
+
+
+
+--Web search
+
+
+type SafeSearch
+    = Moderate
+    | Off
+    | Active
+
+
+
+--disableWebSearch : Bool
+
+
+type alias WebSearch =
+    { resultSetSize : Size
+    , safeSearch : SafeSearch
+    , queryAddition : Maybe String
+    , cr : Maybe String
+    , gl : Maybe String
+    , as_sitesearch : Maybe String
+    , as_oq : Maybe String
+    , sort_by : Maybe String
+    , filter : Maybe String
+    }
+
+
+webSearch =
+    { resultSetSize = SizeInt 10
+    , safeSearch = Off
+    , queryAddition = Nothing
+    , cr = Nothing
+    , gl = Nothing
+    , as_sitesearch = Nothing
+    , as_oq = Nothing
+    , sort_by = Nothing
+    , filter = Nothing
+    }
+
+
+
+--Search results
+
+
+type alias SearchResults =
+    { enableOrderBy : Bool
+    , linkTarget : Maybe String
+    , noResultsString : Maybe String
+    , setSize : Size
+    , safeSearch : SafeSearch
+    }
+
+
+searchResults =
+    { enableOrderBy = True
+    , linkTarget = Nothing
+    , noResultsString = Nothing
+    , setSize = SizeInt 10
+    , safeSearch = Off
+    }
+
+
+
+--Ads
+
+
+type alias Ads =
+    { channel : Maybe String
+    , client : String
+    , enableTest : Bool
+    }
+
+
+ads =
+    { channel = Nothing
+    , enableTest = False
+    }
+
+
+
+-- Analytics
+
+
+type alias Analytics =
+    { categoryParameter : Maybe String
+    , queryParameter : Maybe String
+    }
+
+
+
+--Component attributes
+
+
+type Search
+    = Web WebSearch
+    | Image ImageSearch
+    | Both WebSearch ImageSearch
+
+
+type alias Attributes =
+    { general : General
+    , search : Search
+    , autocomplete : Maybe Autocomplete
+    , results : Maybe SearchResults
+    , refinements : Maybe Refinements
+    , ads : Maybe Ads
+    , analytics : Maybe Analytics
+    }
+
+
+attributes =
+    { general = general
+    , search = Web webSearch
+    , autocomplete = Nothing
+    , refinements = Nothing
+    , results = Nothing
+    , ads = Nothing
+    , analytics = Nothing
     }
