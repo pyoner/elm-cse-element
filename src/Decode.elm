@@ -1,7 +1,17 @@
 module Decode exposing (decoder)
 
-import Json.Decode exposing (..)
-import Types exposing (..)
+import Json.Decode
+    exposing
+        ( Decoder
+        , index
+        , string
+        , bool
+        , map
+        , map2
+        , andThen
+        , fail
+        )
+import Types exposing (Event(..), QueryResult, GnameResult)
 
 
 -- helpers decoders
