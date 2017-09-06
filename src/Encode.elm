@@ -17,10 +17,49 @@ import Types
         , Autocomplete
         , MatchType(..)
         , General
+        , Search(..)
         )
 
 
---encoder : Attributes -> Value
+encoder : Attributes -> Value
+encoder r =
+    let
+        list =
+            (generalEncoder r.general)
+                ++ (searchEncoder r.search)
+                ++ (applyEncoder autocompleteEncoder r.autocomplete)
+                ++ (applyEncoder searchResultsEncoder r.results)
+                ++ (applyEncoder refinementsEncoder r.refinements)
+                ++ (applyEncoder adsEncoder r.ads)
+                ++ (applyEncoder analyticsEncoder r.analytics)
+    in
+        object list
+
+
+applyEncoder :
+    (a -> List ( String, Value ))
+    -> Maybe a
+    -> List ( String, Value )
+applyEncoder encoder maybe =
+    case maybe of
+        Nothing ->
+            []
+
+        Just v ->
+            encoder v
+
+
+searchEncoder : Search -> List ( String, Value )
+searchEncoder search =
+    case search of
+        Web web ->
+            webSearchEncoder web
+
+        Image image ->
+            imageSearchEncoder image
+
+        Both web image ->
+            (webSearchEncoder web) ++ (imageSearchEncoder image)
 
 
 maybeEncoder :
