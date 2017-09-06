@@ -62,19 +62,19 @@ type alias Config =
 type alias General =
     { gname : Gname
     , autoSearchOnLoad : Bool
-    , enableHistory : Maybe Bool
+    , enableHistory : Bool
+    , newWindow : Bool
     , queryParameterName : String
     , resultsUrl : Maybe String
-    , newWindow : Maybe Bool
     }
 
 
 general =
     { autoSearchOnLoad = True
-    , enableHistory = Nothing
+    , enableHistory = True
+    , newWindow = True
     , queryParameterName = "q"
     , resultsUrl = Nothing
-    , newWindow = Nothing
     }
 
 

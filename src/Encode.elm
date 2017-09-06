@@ -16,6 +16,7 @@ import Types
         , RefinementStyle(..)
         , Autocomplete
         , MatchType(..)
+        , General
         )
 
 
@@ -172,3 +173,14 @@ autocompleteEncoder r =
         ++ (maybeEncoder r.maxCompletions "autoCompleteMaxCompletions" int)
         ++ (maybeEncoder r.maxPromotions "autoCompleteMaxPromotions" int)
         ++ (maybeEncoder r.validLanguages "autoCompleteValidLanguages" string)
+
+
+generalEncoder : General -> List ( String, Value )
+generalEncoder r =
+    [ ( "gname", string r.gname )
+    , ( "autoSearchOnLoad", bool r.autoSearchOnLoad )
+    , ( "enableHistory", bool r.enableHistory )
+    , ( "newWindow", bool r.newWindow )
+    , ( "queryParameterName", string r.queryParameterName )
+    ]
+        ++ (maybeEncoder r.resultsUrl "resultsUrl" string)
