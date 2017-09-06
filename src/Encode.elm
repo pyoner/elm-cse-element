@@ -21,8 +21,8 @@ import Types
         )
 
 
-encoder : Attributes -> Value
-encoder r =
+attrsEncoder : Attributes -> Value
+attrsEncoder r =
     let
         list =
             (generalEncoder r.general)
@@ -77,32 +77,24 @@ maybeEncoder a name encode =
 
 
 analyticsEncoder : Analytics -> List ( String, Value )
-analyticsEncoder analytics =
-    (maybeEncoder
-        analytics.categoryParameter
-        "gaCategoryParameter"
-        string
-    )
-        ++ (maybeEncoder
-                analytics.queryParameter
-                "gaQueryParameter"
-                string
-           )
+analyticsEncoder r =
+    (maybeEncoder r.categoryParameter "gaCategoryParameter" string)
+        ++ (maybeEncoder r.queryParameter "gaQueryParameter" string)
 
 
 adsEncoder : Ads -> List ( String, Value )
-adsEncoder ads =
-    [ ( "adclient", string ads.client )
+adsEncoder r =
+    [ ( "adclient", string r.client )
     , ( "adtest"
       , string
-            (if ads.enableTest then
+            (if r.enableTest then
                 "on"
              else
                 "off"
             )
       )
     ]
-        ++ (maybeEncoder ads.channel "adchannel" string)
+        ++ (maybeEncoder r.channel "adchannel" string)
 
 
 sizeEncoder : Size -> Value
