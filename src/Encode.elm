@@ -9,6 +9,7 @@ import Types
         , SearchResults
         , Size(..)
         , SafeSearch(..)
+        , WebSearch
         )
 
 
@@ -89,3 +90,17 @@ searchResultsEncoder r =
     ]
         ++ (maybeEncoder r.linkTarget "linkTarget" string)
         ++ (maybeEncoder r.noResultsString "noResultsString" string)
+
+
+webSearchEncoder : WebSearch -> List ( String, Value )
+webSearchEncoder r =
+    [ ( "webSearchResultSetSize", sizeEncoder r.resultSetSize )
+    , ( "webSearchSafesearch", safeSearchEncoder r.safeSearch )
+    ]
+        ++ (maybeEncoder r.queryAddition "webSearchQueryAddition" string)
+        ++ (maybeEncoder r.cr "cr" string)
+        ++ (maybeEncoder r.gl "gl" string)
+        ++ (maybeEncoder r.as_sitesearch "as_sitesearch" string)
+        ++ (maybeEncoder r.as_oq "as_oq" string)
+        ++ (maybeEncoder r.sort_by "sort_by" string)
+        ++ (maybeEncoder r.filter "filter" string)
