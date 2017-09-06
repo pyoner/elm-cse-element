@@ -14,6 +14,8 @@ import Types
         , Layout(..)
         , Refinements
         , RefinementStyle(..)
+        , Autocomplete
+        , MatchType(..)
         )
 
 
@@ -149,3 +151,24 @@ refinementsEncoder : Refinements -> List ( String, Value )
 refinementsEncoder r =
     (maybeEncoder r.default "defaultToRefinement" string)
         ++ (maybeEncoder r.style "refinementStyle" refinementStyleEncoder)
+
+
+matchTypeEncoder : MatchType -> Value
+matchTypeEncoder matchType =
+    case matchType of
+        Any ->
+            string "any"
+
+        Ordered ->
+            string "ordered"
+
+        Prefix ->
+            string "prefix"
+
+
+autocompleteEncoder : Autocomplete -> List ( String, Value )
+autocompleteEncoder r =
+    (maybeEncoder r.matchType "autoCompleteMatchType" matchTypeEncoder)
+        ++ (maybeEncoder r.maxCompletions "autoCompleteMaxCompletions" int)
+        ++ (maybeEncoder r.maxPromotions "autoCompleteMaxPromotions" int)
+        ++ (maybeEncoder r.validLanguages "autoCompleteValidLanguages" string)
