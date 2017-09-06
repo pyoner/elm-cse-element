@@ -10,6 +10,8 @@ import Types
         , Size(..)
         , SafeSearch(..)
         , WebSearch
+        , ImageSearch
+        , Layout(..)
         )
 
 
@@ -104,3 +106,28 @@ webSearchEncoder r =
         ++ (maybeEncoder r.as_oq "as_oq" string)
         ++ (maybeEncoder r.sort_by "sort_by" string)
         ++ (maybeEncoder r.filter "filter" string)
+
+
+layoutEncoder : Layout -> Value
+layoutEncoder layout =
+    case layout of
+        Classic ->
+            string "classic"
+
+        Column ->
+            string "column"
+
+        Popup ->
+            string "popup"
+
+
+imageSearchEncoder : ImageSearch -> List ( String, Value )
+imageSearchEncoder r =
+    [ ( "imageSearchResultSetSize", sizeEncoder r.resultSetSize ) ]
+        ++ (maybeEncoder r.layout "imageSearchLayout" layoutEncoder)
+        ++ (maybeEncoder r.cr "image_cr" string)
+        ++ (maybeEncoder r.gl "image_gl" string)
+        ++ (maybeEncoder r.as_sitesearch "image_as_sitesearch" string)
+        ++ (maybeEncoder r.as_oq "image_as_oq" string)
+        ++ (maybeEncoder r.sort_by "image_sort_by" string)
+        ++ (maybeEncoder r.filter "image_filter" string)
