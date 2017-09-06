@@ -12,6 +12,8 @@ import Types
         , WebSearch
         , ImageSearch
         , Layout(..)
+        , Refinements
+        , RefinementStyle(..)
         )
 
 
@@ -131,3 +133,19 @@ imageSearchEncoder r =
         ++ (maybeEncoder r.as_oq "image_as_oq" string)
         ++ (maybeEncoder r.sort_by "image_sort_by" string)
         ++ (maybeEncoder r.filter "image_filter" string)
+
+
+refinementStyleEncoder : RefinementStyle -> Value
+refinementStyleEncoder style =
+    case style of
+        Tab ->
+            string "tab"
+
+        Link ->
+            string "link"
+
+
+refinementsEncoder : Refinements -> List ( String, Value )
+refinementsEncoder r =
+    (maybeEncoder r.default "defaultToRefinement" string)
+        ++ (maybeEncoder r.style "refinementStyle" refinementStyleEncoder)
