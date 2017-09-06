@@ -1,7 +1,7 @@
 module Encode exposing (..)
 
 import Json.Encode exposing (..)
-import Types exposing (Attributes, Analytics)
+import Types exposing (Attributes, Analytics, Ads)
 
 
 --encoder : Attributes -> Value
@@ -33,3 +33,18 @@ analyticsEncoder analytics =
                 "gaQueryParameter"
                 string
            )
+
+
+adsEncoder : Ads -> List ( String, Value )
+adsEncoder ads =
+    [ ( "adclient", string ads.client )
+    , ( "adtest"
+      , string
+            (if ads.enableTest then
+                "on"
+             else
+                "off"
+            )
+      )
+    ]
+        ++ (maybeEncoder ads.channel "adchannel" string)
