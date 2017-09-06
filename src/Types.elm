@@ -207,19 +207,19 @@ webSearch =
 
 type alias SearchResults =
     { enableOrderBy : Bool
+    , safeSearch : SafeSearch
+    , setSize : Size
     , linkTarget : Maybe String
     , noResultsString : Maybe String
-    , setSize : Size
-    , safeSearch : SafeSearch
     }
 
 
 searchResults =
     { enableOrderBy = True
+    , safeSearch = Off
+    , setSize = SizeInt 10
     , linkTarget = Nothing
     , noResultsString = Nothing
-    , setSize = SizeInt 10
-    , safeSearch = Off
     }
 
 
@@ -228,15 +228,15 @@ searchResults =
 
 
 type alias Ads =
-    { channel : Maybe String
-    , client : String
+    { client : String
     , enableTest : Bool
+    , channel : Maybe String
     }
 
 
 ads =
-    { channel = Nothing
-    , enableTest = False
+    { enableTest = False
+    , channel = Nothing
     }
 
 
