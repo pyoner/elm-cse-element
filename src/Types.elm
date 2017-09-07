@@ -1,14 +1,13 @@
 module Types exposing (..)
 
-import Attributes.Types exposing (Gname)
+import Attributes.Types exposing (Gname, Attributes)
 
 
 type Component
-    = Search
-    | SearchBox
-    | SearchResults
-    | SearchBoxOnly
-    | SearchResultsOnly
+    = Search ElementId
+    | SearchBoxResults ( ElementId, ElementId )
+    | SearchBoxOnly ElementId
+    | SearchResultsOnly ElementId
 
 
 type Event
@@ -25,14 +24,10 @@ type alias Cx =
     String
 
 
-type alias UIOptions =
-    {}
-
-
-type alias Element =
-    { gname : String
-    , type_ : String
-    , uiOptions : UIOptions
+type alias Config =
+    { div : ElementId
+    , tag : String
+    , attributes : Attributes
     }
 
 
