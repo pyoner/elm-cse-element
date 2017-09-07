@@ -1,7 +1,7 @@
-module Encode exposing (..)
+module Attributes.Encode exposing (..)
 
 import Json.Encode exposing (..)
-import Types
+import Attributes.Types
     exposing
         ( Attributes
         , Analytics
