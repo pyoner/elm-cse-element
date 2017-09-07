@@ -11,9 +11,23 @@ port module Element
         , clearAllResults
         )
 
-import Types exposing (..)
-import Decode exposing (decoder)
 import Json.Decode as Decode
+import Json.Encode as Encode
+
+
+--local import
+
+import Types
+    exposing
+        ( Cx
+        , Query
+        , Event(DecodeError)
+        , ElementId
+        , Component(..)
+        )
+import Attributes.Types exposing (Attributes, Gname)
+import Decode exposing (decoder)
+import Encode exposing (componentEncoder)
 
 
 {-| Load a CSE script
@@ -21,9 +35,14 @@ import Json.Decode as Decode
 port load : Cx -> Cmd msg
 
 
+port render_ : Encode.Value -> Cmd msg
+
+
 {-| Renders a CSE element
 -}
-port render : ( Config, Maybe Config ) -> Cmd msg
+render : Component -> Attributes -> Cmd msg
+render component attrs =
+    render_ (componentEncoder component attrs)
 
 
 {-| Renders all CSE tags/classes in the specified container
