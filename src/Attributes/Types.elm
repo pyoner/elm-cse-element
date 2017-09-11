@@ -25,7 +25,8 @@ type alias General =
 
 
 general =
-    { autoSearchOnLoad = True
+    { gname = ""
+    , autoSearchOnLoad = True
     , enableHistory = True
     , newWindow = True
     , queryParameterName = "q"
