@@ -1,10 +1,24 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, img, button)
-import Html.Attributes exposing (src, attribute, disabled)
-import Html.Events exposing (onClick)
+import Html exposing (Html, text, div, img, button, select, option)
+import Html.Attributes
+    exposing
+        ( src
+        , attribute
+        , disabled
+        , selected
+        , id
+        , value
+        )
+import Html.Events exposing (onClick, on, targetValue)
+import Json.Decode as Decode
+
+
+--local import
+
 import Element
 import Types
+import Attributes.Types as ATypes exposing (general, attributes)
 
 
 ---- MODEL ----
@@ -20,15 +34,29 @@ cseElementId =
     "search-cse"
 
 
-cseGname : Types.Gname
+cseOptElementId : String
+cseOptElementId =
+    "search-cse-opt"
+
+
+cseGname : ATypes.Gname
 cseGname =
     "test"
+
+
+type alias Item =
+    ( Types.Component, ATypes.Attributes, String )
+
+
+type alias Items =
+    List Item
 
 
 type alias Model =
     { cseIsReady : Bool
     , cseIsRendred : Bool
-    , cseContainerFlag : Bool
+    , selected : ATypes.Gname
+    , items : Items
     }
 
 
@@ -36,7 +64,37 @@ init : ( Model, Cmd Msg )
 init =
     ( { cseIsReady = False
       , cseIsRendred = False
-      , cseContainerFlag = False
+      , selected = "search"
+      , items =
+            [ ( Types.Search cseElementId
+              , { attributes
+                    | general =
+                        { general | gname = "search" }
+                }
+              , "Search component"
+              )
+            , ( Types.SearchBoxResults ( cseElementId, cseOptElementId )
+              , { attributes
+                    | general =
+                        { general | gname = "searchBoxResults" }
+                }
+              , "Search box and results component"
+              )
+            , ( Types.SearchBoxOnly cseElementId
+              , { attributes
+                    | general =
+                        { general | gname = "searchBoxOnly" }
+                }
+              , "Search box only component"
+              )
+            , ( Types.SearchResultsOnly cseElementId
+              , { attributes
+                    | general =
+                        { general | gname = "searchResultsOnly" }
+                }
+              , "Search results only component"
+              )
+            ]
       }
     , Cmd.none
     )
@@ -49,13 +107,27 @@ init =
 type Msg
     = CseLoad Types.Cx
     | CseReady Bool
-    | CseRender Types.Gname String
-    | CseClearResults Types.Gname
-    | CsePrefillQuery Types.Gname Types.Query
-    | CseExecute Types.Gname Types.Query
-    | CseDestroyContainer
-    | CseCreateContainer
+    | CseRender
     | ElementEvent Types.Event
+    | GnameSelected ATypes.Gname
+
+
+getSelectedItem : ATypes.Gname -> Items -> Maybe Item
+getSelectedItem gname items =
+    case List.head items of
+        Nothing ->
+            Nothing
+
+        Just ( component, attrs, description ) ->
+            if attrs.general.gname == gname then
+                Just ( component, attrs, description )
+            else
+                case List.tail items of
+                    Nothing ->
+                        Nothing
+
+                    Just tail ->
+                        getSelectedItem gname tail
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -67,34 +139,24 @@ update msg model =
         CseReady flag ->
             ( { model | cseIsReady = flag }, Cmd.none )
 
-        CseRender gname elementId ->
-            ( model
-            , Element.render
-                ( { div = elementId
-                  , tag = "search"
-                  , gname = gname
-                  , attributes = Nothing
-                  }
-                , Nothing
-                )
-            )
+        CseRender ->
+            let
+                item =
+                    getSelectedItem model.selected model.items
+            in
+                case item of
+                    Nothing ->
+                        ( model
+                        , Cmd.none
+                        )
 
-        CseClearResults gname ->
-            ( model, Element.clearAllResults gname )
+                    Just ( component, attts, description ) ->
+                        ( model, Element.render component attts )
 
-        CsePrefillQuery gname query ->
-            ( model, Element.prefillQuery ( gname, query ) )
+        GnameSelected gname ->
+            ( { model | selected = gname }, Cmd.none )
 
-        CseExecute gname query ->
-            ( model, Element.execute ( gname, query ) )
-
-        --create/destroy container
-        CseDestroyContainer ->
-            ( { model | cseContainerFlag = False, cseIsRendred = False }, Cmd.none )
-
-        CseCreateContainer ->
-            ( { model | cseContainerFlag = True }, Cmd.none )
-
+        -- Element events
         ElementEvent event ->
             case event of
                 Types.Load result ->
@@ -113,14 +175,6 @@ update msg model =
 ---- VIEW ----
 
 
-containerView : String -> Model -> Html Msg
-containerView id model =
-    if not model.cseContainerFlag then
-        text ""
-    else
-        div [ attribute "id" id ] []
-
-
 view : Model -> Html Msg
 view model =
     div []
@@ -129,41 +183,32 @@ view model =
             , disabled model.cseIsReady
             ]
             [ text "load CSE" ]
-        , button
-            [ onClick (CseCreateContainer)
-            , disabled (not model.cseIsReady || model.cseContainerFlag)
+        , select
+            [ disabled (not model.cseIsReady)
+            , on "change" (Decode.map GnameSelected targetValue)
             ]
-            [ text "create container" ]
+          <|
+            List.map
+                (\( component, attrs, description ) ->
+                    option
+                        [ value attrs.general.gname
+                        , selected (model.selected == attrs.general.gname)
+                        ]
+                        [ text
+                            description
+                        ]
+                )
+                model.items
         , button
-            [ onClick (CseRender cseGname cseElementId)
+            [ onClick CseRender
             , disabled
                 (not model.cseIsReady
                     || model.cseIsRendred
-                    || not model.cseContainerFlag
                 )
             ]
-            [ text "render CSE" ]
-        , button
-            [ onClick (CseClearResults cseGname)
-            , disabled (not model.cseIsRendred)
-            ]
-            [ text "clear search results" ]
-        , button
-            [ onClick (CsePrefillQuery cseGname "elm-lang")
-            , disabled (not model.cseIsRendred)
-            ]
-            [ text "prefill query" ]
-        , button
-            [ onClick (CseExecute cseGname "ethereum")
-            , disabled (not model.cseIsRendred)
-            ]
-            [ text "execute query" ]
-        , button
-            [ onClick (CseDestroyContainer)
-            , disabled (not model.cseIsRendred)
-            ]
-            [ text "destroy container" ]
-        , containerView cseElementId model
+            [ text "render" ]
+        , div [ id cseElementId ] []
+        , div [ id cseOptElementId ] []
         ]
 
 
