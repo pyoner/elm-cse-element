@@ -87,7 +87,7 @@ init =
                 }
               , "Search box only component"
               )
-            , ( Types.SearchResultsOnly cseElementId
+            , ( Types.SearchResultsOnly cseOptElementId
               , { attributes
                     | general =
                         { general | gname = "searchResultsOnly" }
