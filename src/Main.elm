@@ -12,6 +12,8 @@ import Html.Attributes
         )
 import Html.Events exposing (onClick, on, targetValue)
 import Json.Decode as Decode
+import Process
+import Task
 
 
 --local import
@@ -55,6 +57,7 @@ type alias Items =
 type alias Model =
     { cseIsReady : Bool
     , cseIsRendred : Bool
+    , createContainer : Bool
     , selected : ATypes.Gname
     , items : Items
     }
@@ -64,6 +67,7 @@ init : ( Model, Cmd Msg )
 init =
     ( { cseIsReady = False
       , cseIsRendred = False
+      , createContainer = True
       , selected = "search"
       , items =
             [ ( Types.Search cseElementId
@@ -110,6 +114,7 @@ type Msg
     | CseRender
     | ElementEvent Types.Event
     | GnameSelected ATypes.Gname
+    | CreateContainer Bool
 
 
 getSelectedItem : ATypes.Gname -> Items -> Maybe Item
@@ -154,7 +159,12 @@ update msg model =
                         ( model, Element.render component attts )
 
         GnameSelected gname ->
-            ( { model | selected = gname }, Cmd.none )
+            ( { model | selected = gname, createContainer = False }
+            , Process.sleep 0 |> Task.andThen (\_ -> Task.succeed True) |> Task.perform CreateContainer
+            )
+
+        CreateContainer flag ->
+            ( { model | createContainer = flag }, Cmd.none )
 
         -- Element events
         ElementEvent event ->
@@ -173,6 +183,17 @@ update msg model =
 
 
 ---- VIEW ----
+
+
+containerView : Model -> Html Msg
+containerView model =
+    div [] <|
+        if model.createContainer then
+            [ div [ id cseElementId ] []
+            , div [ id cseOptElementId ] []
+            ]
+        else
+            []
 
 
 view : Model -> Html Msg
@@ -207,8 +228,7 @@ view model =
                 )
             ]
             [ text "render" ]
-        , div [ id cseElementId ] []
-        , div [ id cseOptElementId ] []
+        , containerView model
         ]
 
 
