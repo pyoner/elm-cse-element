@@ -168,7 +168,7 @@ update msg model =
 
         -- Element events
         ElementEvent event ->
-            case event of
+            case (Debug.log "ElementEvent" event) of
                 Types.Load result ->
                     case result of
                         Ok cx ->
