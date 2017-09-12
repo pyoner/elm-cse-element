@@ -45,5 +45,6 @@ configEncoder { div, tag, attributes } =
     object
         [ ( "div", string div )
         , ( "tag", string tag )
+        , ( "gname", string attributes.general.gname )
         , ( "attributes", attrsEncoder attributes )
         ]
