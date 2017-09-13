@@ -9,6 +9,7 @@ port module Element
         , prefillQuery
         , getInputQuery
         , clearAllResults
+        , clear
         )
 
 import Json.Decode as Decode
