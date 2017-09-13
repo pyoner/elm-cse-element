@@ -146,6 +146,9 @@ decoder =
                     "ClearAllResults" ->
                         valueDecoder flag clearAllResultsDecoders
 
+                    "Clear" ->
+                        valueDecoder flag clearDecoders
+
                     _ ->
                         fail <| "Bad event name: " ++ event
             )
