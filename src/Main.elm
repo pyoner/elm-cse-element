@@ -12,8 +12,6 @@ import Html.Attributes
         )
 import Html.Events exposing (onInput, onClick, on, targetValue)
 import Json.Decode as Decode
-import Process
-import Task
 
 
 --local import
@@ -57,7 +55,6 @@ type alias Items =
 type alias Model =
     { cseIsReady : Bool
     , cseIsRendred : Bool
-    , createContainer : Bool
     , selected : ATypes.Gname
     , items : Items
     , query : String
@@ -68,7 +65,6 @@ init : ( Model, Cmd Msg )
 init =
     ( { cseIsReady = False
       , cseIsRendred = False
-      , createContainer = True
       , selected = "search"
       , query = ""
       , items =
@@ -116,7 +112,6 @@ type Msg
     | CseRender
     | ElementEvent Types.Event
     | GnameSelected ATypes.Gname
-    | CreateContainer Bool
     | Search
     | Query String
     | ClearAllResults
@@ -164,12 +159,12 @@ update msg model =
                         ( model, Element.render component attts )
 
         GnameSelected gname ->
-            ( { model | selected = gname, createContainer = False }
-            , Process.sleep 0 |> Task.andThen (\_ -> Task.succeed True) |> Task.perform CreateContainer
+            ( { model | selected = gname }
+            , Cmd.batch
+                [ Element.clear cseElementId
+                , Element.clear cseOptElementId
+                ]
             )
-
-        CreateContainer flag ->
-            ( { model | createContainer = flag }, Cmd.none )
 
         -- Search box messages
         Query query ->
@@ -210,12 +205,10 @@ containerView model =
                 []
     in
         div [] <|
-            if model.createContainer then
-                [ div [ id cseElementId ] nodes
-                , div [ id cseOptElementId ] []
-                ]
-            else
-                []
+            [ div [] nodes
+            , div [ id cseElementId ] []
+            , div [ id cseOptElementId ] []
+            ]
 
 
 searchBoxView : Model -> Html Msg
