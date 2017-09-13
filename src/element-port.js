@@ -33,7 +33,6 @@ export function init(app) {
 
     app.ports.render_.subscribe(function([componentConfig, opt_componentConfig]) {
         const id = componentConfig.div;
-        document.getElementById(id).innerHTML = '';
         try {
             google.search.cse.element.render(componentConfig, opt_componentConfig);
         } catch (e) {
