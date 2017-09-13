@@ -119,6 +119,7 @@ type Msg
     | CreateContainer Bool
     | Search
     | Query String
+    | ClearAllResults
 
 
 getSelectedItem : ATypes.Gname -> Items -> Maybe Item
@@ -177,6 +178,9 @@ update msg model =
         Search ->
             ( model, Element.execute ( model.selected, model.query ) )
 
+        ClearAllResults ->
+            ( model, Element.clearAllResults model.selected )
+
         -- Element events
         ElementEvent event ->
             case (Debug.log "ElementEvent" event) of
@@ -219,6 +223,7 @@ searchBoxView model =
     div []
         [ input [ onInput Query ] []
         , button [ onClick Search ] [ text "search" ]
+        , button [ onClick ClearAllResults ] [ text "clear" ]
         ]
 
 
