@@ -3,8 +3,6 @@ port module Element
         ( load
         , listen
         , render
-        , go
-        , getElement
         , execute
         , prefillQuery
         , getInputQuery
@@ -44,16 +42,6 @@ port render_ : Encode.Value -> Cmd msg
 render : Component -> Attributes -> Cmd msg
 render component attrs =
     render_ (componentEncoder component attrs)
-
-
-{-| Renders all CSE tags/classes in the specified container
--}
-port go : String -> Cmd msg
-
-
-{-| Gets the element object by gname
--}
-port getElement : String -> Cmd msg
 
 
 {-| Executes a programmatic query
