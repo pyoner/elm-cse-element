@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, img, button, select, option)
+import Html exposing (Html, text, div, img, button, select, option, input)
 import Html.Attributes
     exposing
         ( src
@@ -10,7 +10,7 @@ import Html.Attributes
         , id
         , value
         )
-import Html.Events exposing (onClick, on, targetValue)
+import Html.Events exposing (onInput, onClick, on, targetValue)
 import Json.Decode as Decode
 import Process
 import Task
@@ -60,6 +60,7 @@ type alias Model =
     , createContainer : Bool
     , selected : ATypes.Gname
     , items : Items
+    , query : String
     }
 
 
@@ -69,6 +70,7 @@ init =
       , cseIsRendred = False
       , createContainer = True
       , selected = "search"
+      , query = ""
       , items =
             [ ( Types.Search cseElementId
               , { attributes
@@ -115,6 +117,8 @@ type Msg
     | ElementEvent Types.Event
     | GnameSelected ATypes.Gname
     | CreateContainer Bool
+    | Search
+    | Query String
 
 
 getSelectedItem : ATypes.Gname -> Items -> Maybe Item
@@ -166,6 +170,13 @@ update msg model =
         CreateContainer flag ->
             ( { model | createContainer = flag }, Cmd.none )
 
+        -- Search box messages
+        Query query ->
+            ( { model | query = query }, Cmd.none )
+
+        Search ->
+            ( model, Element.execute ( model.selected, model.query ) )
+
         -- Element events
         ElementEvent event ->
             case (Debug.log "ElementEvent" event) of
@@ -187,13 +198,28 @@ update msg model =
 
 containerView : Model -> Html Msg
 containerView model =
-    div [] <|
-        if model.createContainer then
-            [ div [ id cseElementId ] []
-            , div [ id cseOptElementId ] []
-            ]
-        else
-            []
+    let
+        nodes =
+            if model.selected == "searchResultsOnly" then
+                [ searchBoxView model ]
+            else
+                []
+    in
+        div [] <|
+            if model.createContainer then
+                [ div [ id cseElementId ] nodes
+                , div [ id cseOptElementId ] []
+                ]
+            else
+                []
+
+
+searchBoxView : Model -> Html Msg
+searchBoxView model =
+    div []
+        [ input [ onInput Query ] []
+        , button [ onClick Search ] [ text "search" ]
+        ]
 
 
 view : Model -> Html Msg
