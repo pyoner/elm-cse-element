@@ -59,6 +59,14 @@ loadDecoders =
     )
 
 
+clearDecoders : ( Decoder Event, Decoder Event )
+clearDecoders =
+    ( map (\elementId -> Clear (Ok elementId))
+        string
+    , makeErrDecoder Clear
+    )
+
+
 
 --GnameResult decoders
 
@@ -135,8 +143,9 @@ decoder =
                     "InputQuery" ->
                         valueDecoder flag inputQueryDecoders
 
+                    "ClearAllResults" ->
+                        valueDecoder flag clearAllResultsDecoders
+
                     _ ->
-                        fail <|
-                            "Bad event name: "
-                                ++ event
+                        fail <| "Bad event name: " ++ event
             )

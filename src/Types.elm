@@ -17,6 +17,7 @@ type Event
     | Execute QueryResult
     | PrefillQuery QueryResult
     | InputQuery QueryResult
+    | Clear (Result Error ElementId)
     | DecodeError Error
 
 

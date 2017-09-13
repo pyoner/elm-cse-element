@@ -75,6 +75,11 @@ port getInputQuery : Gname -> Cmd msg
 port clearAllResults : Gname -> Cmd msg
 
 
+{-| Clear dom by element id
+-}
+port clear : String -> Cmd msg
+
+
 
 -- Subscriptions
 

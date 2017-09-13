@@ -43,6 +43,16 @@ export function init(app) {
         event.send(["Render", true, componentConfig.gname]);
     });
 
+    app.ports.clear.subscribe(function(elementId){
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.innerHTML = "";
+            event.send(["Clear", true, elementId]);
+        } else {
+            event.send(["Clear", false, `Can't found DOM element by id ${elementId}`]);
+        }
+    });
+
     app.ports.go.subscribe(function(opt_container) {
         google.search.cse.element.go(opt_container);
     });
