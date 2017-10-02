@@ -1,6 +1,10 @@
 module Types exposing (..)
 
-import Attributes.Types exposing (Gname, Attributes)
+import Attributes.Types exposing (Attributes)
+
+
+type alias Gname =
+    String
 
 
 type Component
