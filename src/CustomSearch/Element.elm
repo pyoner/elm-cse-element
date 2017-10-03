@@ -1,4 +1,4 @@
-port module Element
+port module CustomSearch.Element
     exposing
         ( load
         , listen
@@ -16,15 +16,16 @@ import Json.Encode as Encode
 
 --local import
 
-import Types
+import CustomSearch.Types
     exposing
         ( Cx
         , Query
+        , Gname
         , Event(DecodeError)
         , ElementId
         , Component(..)
         )
-import Attributes.Types exposing (Attributes, Gname)
+import CustomSearch.Attributes exposing (Attributes)
 import Decode exposing (decoder)
 import Encode exposing (componentEncoder)
 

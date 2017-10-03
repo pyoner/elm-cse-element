@@ -1,6 +1,6 @@
-module Types exposing (..)
+module CustomSearch.Types exposing (..)
 
-import Attributes.Types exposing (Attributes)
+import CustomSearch.Attributes exposing (Attributes)
 
 
 type alias Gname =
