@@ -25,7 +25,7 @@ type Size
     | SizeInt Int
 
 
-type SafeSearch
+type Safe
     = Moderate
     | Off
     | Active
@@ -68,7 +68,7 @@ type Attribute
       -- WebSearch
     | DisableWebSearch Bool
     | WebSearchResultSetSize Size
-    | WebSearchSafeSearch SafeSearch
+    | WebSearchSafesearch Safe
     | WebSearchQueryAddition String
     | WebCR String
     | WebGL String
@@ -81,7 +81,7 @@ type Attribute
     | LinkTarget String
     | NoResultsString String
     | ResultSetSize Size
-    | SafeSearch SafeSearch
+    | SafeSearch Safe
       -- Ads
     | AdClient String
     | AdEnableTest Bool
