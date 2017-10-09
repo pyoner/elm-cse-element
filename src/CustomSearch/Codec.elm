@@ -23,6 +23,26 @@ encodeInt =
     Json.encodeValue Json.int
 
 
+acc : List a -> a -> List a
+acc list a =
+    a :: list
+
+
+accMaybe : List a -> Maybe a -> List a
+accMaybe list m =
+    case m of
+        Just a ->
+            acc list a
+
+        Nothing ->
+            list
+
+
+decoderMaybeField : String -> Decode.Decoder (Maybe Attribute)
+decoderMaybeField k =
+    Decode.maybe (Decode.field k (decoderByKey k))
+
+
 
 --MatchType
 
@@ -530,7 +550,7 @@ decoderByKey k =
             Decode.map WebFilter Decode.string
 
         --SearchResults
-        "EnableOrderBy" ->
+        "enableOrderBy" ->
             Decode.map EnableOrderBy Decode.bool
 
         "linkTarget" ->
@@ -565,6 +585,78 @@ decoderByKey k =
         --fail
         _ ->
             Decode.fail <| "Bad key: " ++ k
+
+
+objectToAttributes : Decode.Decoder Attributes
+objectToAttributes =
+    let
+        decoderForField =
+            (\k ->
+                (\list ->
+                    Decode.map (accMaybe list) (decoderMaybeField k)
+                )
+            )
+    in
+        Decode.succeed ([])
+            |> Decode.andThen (decoderForField "gname")
+            |> Decode.andThen (decoderForField "autoSearchOnLoad")
+            |> Decode.andThen (decoderForField "enableHistory")
+            |> Decode.andThen (decoderForField "newWindow")
+            |> Decode.andThen (decoderForField "queryParameterName")
+            |> Decode.andThen (decoderForField "resultsUrl")
+            --AutoComplete
+            |>
+                Decode.andThen (decoderForField "autoCompleteMatchType")
+            |> Decode.andThen (decoderForField "autoCompleteMaxCompletions")
+            |> Decode.andThen (decoderForField "autoCompleteMaxPromotions")
+            |> Decode.andThen (decoderForField "autoCompleteValidLanguages")
+            --Refinements
+            |>
+                Decode.andThen (decoderForField "defaultToRefinement")
+            |> Decode.andThen (decoderForField "refinementStyle")
+            --ImageSearch
+            |>
+                Decode.andThen (decoderForField "enableImageSearch")
+            |> Decode.andThen (decoderForField "defaultToImageSearch")
+            |> Decode.andThen (decoderForField "imageSearchResultSetSize")
+            |> Decode.andThen (decoderForField "imageSearchLayout")
+            |> Decode.andThen (decoderForField "image_cr")
+            |> Decode.andThen (decoderForField "image_gl")
+            |> Decode.andThen (decoderForField "image_as_sitesearch")
+            |> Decode.andThen (decoderForField "image_as_oq")
+            |> Decode.andThen (decoderForField "image_sort_by")
+            |> Decode.andThen (decoderForField "image_filter")
+            --WebSearch
+            |>
+                Decode.andThen (decoderForField "disableWebSearch")
+            |> Decode.andThen (decoderForField "webSearchResultSetSize")
+            |> Decode.andThen (decoderForField "webSearchSafesearch")
+            |> Decode.andThen (decoderForField "webSearchQueryAddition")
+            |> Decode.andThen (decoderForField "cr")
+            |> Decode.andThen (decoderForField "gl")
+            |> Decode.andThen (decoderForField "as_sitesearch")
+            |> Decode.andThen (decoderForField "as_oq")
+            |> Decode.andThen (decoderForField "sort_by")
+            |> Decode.andThen (decoderForField "filter")
+            --SearchResults
+            |>
+                Decode.andThen (decoderForField "enableOrderBy")
+            |> Decode.andThen (decoderForField "linkTarget")
+            |> Decode.andThen (decoderForField "noResultsString")
+            |> Decode.andThen (decoderForField "resultSetSize")
+            --Ads
+            |>
+                Decode.andThen (decoderForField "adClient")
+            |> Decode.andThen (decoderForField "adEnableTest")
+            |> Decode.andThen (decoderForField "adChannel")
+            |> Decode.andThen (decoderForField "safeSearch")
+            --Google Analytics
+            |>
+                Decode.andThen (decoderForField "gaCategoryParameter")
+            |> Decode.andThen (decoderForField "gaQueryParameter")
+            --Final decoder
+            |>
+                Decode.andThen (\list -> Decode.succeed list)
 
 
 
