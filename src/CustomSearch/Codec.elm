@@ -668,7 +668,6 @@ objectToAttributes =
         |> Decode.andThen (\list -> Decode.succeed list)
 
 
-
---attributesCoder : Json.Coder Attributes
---attributesCoder =
---Json.list
+attributesCoder : Json.Coder Attributes
+attributesCoder =
+    Json.custom attributesToValue objectToAttributes
