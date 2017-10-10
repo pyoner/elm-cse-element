@@ -587,8 +587,11 @@ decoderByKey k =
             Decode.fail <| "Bad key: " ++ k
 
 
-objectToAttributes : Decode.Decoder Attributes
-objectToAttributes =
+decoderFields :
+    Decode.Decoder (Attributes)
+    -> List String
+    -> Decode.Decoder (Attributes)
+decoderFields initDecoder fields =
     let
         decoderForField =
             (\k ->
@@ -597,66 +600,72 @@ objectToAttributes =
                 )
             )
     in
-        Decode.succeed ([])
-            |> Decode.andThen (decoderForField "gname")
-            |> Decode.andThen (decoderForField "autoSearchOnLoad")
-            |> Decode.andThen (decoderForField "enableHistory")
-            |> Decode.andThen (decoderForField "newWindow")
-            |> Decode.andThen (decoderForField "queryParameterName")
-            |> Decode.andThen (decoderForField "resultsUrl")
-            --AutoComplete
-            |>
-                Decode.andThen (decoderForField "autoCompleteMatchType")
-            |> Decode.andThen (decoderForField "autoCompleteMaxCompletions")
-            |> Decode.andThen (decoderForField "autoCompleteMaxPromotions")
-            |> Decode.andThen (decoderForField "autoCompleteValidLanguages")
-            --Refinements
-            |>
-                Decode.andThen (decoderForField "defaultToRefinement")
-            |> Decode.andThen (decoderForField "refinementStyle")
-            --ImageSearch
-            |>
-                Decode.andThen (decoderForField "enableImageSearch")
-            |> Decode.andThen (decoderForField "defaultToImageSearch")
-            |> Decode.andThen (decoderForField "imageSearchResultSetSize")
-            |> Decode.andThen (decoderForField "imageSearchLayout")
-            |> Decode.andThen (decoderForField "image_cr")
-            |> Decode.andThen (decoderForField "image_gl")
-            |> Decode.andThen (decoderForField "image_as_sitesearch")
-            |> Decode.andThen (decoderForField "image_as_oq")
-            |> Decode.andThen (decoderForField "image_sort_by")
-            |> Decode.andThen (decoderForField "image_filter")
-            --WebSearch
-            |>
-                Decode.andThen (decoderForField "disableWebSearch")
-            |> Decode.andThen (decoderForField "webSearchResultSetSize")
-            |> Decode.andThen (decoderForField "webSearchSafesearch")
-            |> Decode.andThen (decoderForField "webSearchQueryAddition")
-            |> Decode.andThen (decoderForField "cr")
-            |> Decode.andThen (decoderForField "gl")
-            |> Decode.andThen (decoderForField "as_sitesearch")
-            |> Decode.andThen (decoderForField "as_oq")
-            |> Decode.andThen (decoderForField "sort_by")
-            |> Decode.andThen (decoderForField "filter")
-            --SearchResults
-            |>
-                Decode.andThen (decoderForField "enableOrderBy")
-            |> Decode.andThen (decoderForField "linkTarget")
-            |> Decode.andThen (decoderForField "noResultsString")
-            |> Decode.andThen (decoderForField "resultSetSize")
-            --Ads
-            |>
-                Decode.andThen (decoderForField "adClient")
-            |> Decode.andThen (decoderForField "adEnableTest")
-            |> Decode.andThen (decoderForField "adChannel")
-            |> Decode.andThen (decoderForField "safeSearch")
-            --Google Analytics
-            |>
-                Decode.andThen (decoderForField "gaCategoryParameter")
-            |> Decode.andThen (decoderForField "gaQueryParameter")
-            --Final decoder
-            |>
-                Decode.andThen (\list -> Decode.succeed list)
+        List.foldl
+            (\field prevDecoder ->
+                prevDecoder |> Decode.andThen (decoderForField field)
+            )
+            initDecoder
+            fields
+
+
+fields : List String
+fields =
+    [ "gname"
+    , "autoSearchOnLoad"
+    , "enableHistory"
+    , "newWindow"
+    , "queryParameterName"
+    , "resultsUrl"
+      --AutoComplete
+    , "autoCompleteMatchType"
+    , "autoCompleteMaxCompletions"
+    , "autoCompleteMaxPromotions"
+    , "autoCompleteValidLanguages"
+      --Refinements
+    , "defaultToRefinement"
+    , "refinementStyle"
+      --ImageSearch
+    , "enableImageSearch"
+    , "defaultToImageSearch"
+    , "imageSearchResultSetSize"
+    , "imageSearchLayout"
+    , "image_cr"
+    , "image_gl"
+    , "image_as_sitesearch"
+    , "image_as_oq"
+    , "image_sort_by"
+    , "image_filter"
+      --WebSearch
+    , "disableWebSearch"
+    , "webSearchResultSetSize"
+    , "webSearchSafesearch"
+    , "webSearchQueryAddition"
+    , "cr"
+    , "gl"
+    , "as_sitesearch"
+    , "as_oq"
+    , "sort_by"
+    , "filter"
+      --SearchResults
+    , "enableOrderBy"
+    , "linkTarget"
+    , "noResultsString"
+    , "resultSetSize"
+      --Ads
+    , "adClient"
+    , "adEnableTest"
+    , "adChannel"
+    , "safeSearch"
+      --Google Analytics
+    , "gaCategoryParameter"
+    , "gaQueryParameter"
+    ]
+
+
+objectToAttributes : Decode.Decoder Attributes
+objectToAttributes =
+    decoderFields (Decode.succeed ([])) fields
+        |> Decode.andThen (\list -> Decode.succeed list)
 
 
 
