@@ -8,10 +8,10 @@ type alias Gname =
 
 
 type Component
-    = Search ElementId
-    | SearchBoxResults ( ElementId, ElementId )
-    | SearchBoxOnly ElementId
-    | SearchResultsOnly ElementId
+    = Search Gname ElementId
+    | SearchBoxResults Gname ( ElementId, ElementId )
+    | SearchBoxOnly Gname ElementId
+    | SearchResultsOnly Gname ElementId
 
 
 type Event
@@ -33,6 +33,7 @@ type alias Config =
     { div : ElementId
     , tag : String
     , attributes : Attributes
+    , gname : Gname
     }
 
 

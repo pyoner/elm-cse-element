@@ -1,32 +1,33 @@
-module Encode exposing (componentEncoder)
+module CustomSearch.Encode exposing (componentEncoder)
 
 import Json.Encode exposing (Value, string, null, object, list)
-import Types exposing (Component(..), Config)
-import Attributes.Types exposing (Attributes)
-import Attributes.Encode exposing (attrsEncoder)
+import Json.Bidirectional as Json
+import CustomSearch.Types exposing (Component(..), Config)
+import CustomSearch.Attributes exposing (Attributes)
+import CustomSearch.Codec exposing (attributesCoder)
 
 
 componentEncoder : Component -> Attributes -> Value
 componentEncoder component attrs =
     let
         base =
-            { attributes = attrs, tag = "", div = "" }
+            { attributes = attrs, gname = "", tag = "", div = "" }
 
         ( config, optConfig ) =
             case component of
-                Search id ->
-                    ( { base | div = id, tag = "search" }, Nothing )
+                Search gname id ->
+                    ( { base | gname = gname, div = id, tag = "search" }, Nothing )
 
-                SearchBoxResults ( id, optId ) ->
-                    ( { base | div = id, tag = "searchbox" }
+                SearchBoxResults gname ( id, optId ) ->
+                    ( { base | gname = gname, div = id, tag = "searchbox" }
                     , Just { base | div = optId, tag = "searchresults" }
                     )
 
-                SearchBoxOnly id ->
-                    ( { base | div = id, tag = "searchbox-only" }, Nothing )
+                SearchBoxOnly gname id ->
+                    ( { base | gname = gname, div = id, tag = "searchbox-only" }, Nothing )
 
-                SearchResultsOnly id ->
-                    ( { base | div = id, tag = "searchresults-only" }, Nothing )
+                SearchResultsOnly gname id ->
+                    ( { base | gname = gname, div = id, tag = "searchresults-only" }, Nothing )
     in
         list <|
             [ configEncoder config ]
@@ -45,6 +46,5 @@ configEncoder { div, tag, attributes } =
     object
         [ ( "div", string div )
         , ( "tag", string tag )
-        , ( "gname", string attributes.general.gname )
-        , ( "attributes", attrsEncoder attributes )
+        , ( "attributes", attributes |> Json.encodeValue attributesCoder )
         ]
