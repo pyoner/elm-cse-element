@@ -1,4 +1,4 @@
-module Decode exposing (decoder)
+module CustomSearch.Decode exposing (decoder)
 
 import Json.Decode
     exposing
@@ -11,7 +11,7 @@ import Json.Decode
         , andThen
         , fail
         )
-import Types exposing (Event(..), QueryResult, GnameResult)
+import CustomSearch.Types exposing (Event(..), QueryResult, GnameResult)
 
 
 -- helpers decoders

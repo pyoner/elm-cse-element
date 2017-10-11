@@ -26,8 +26,8 @@ import CustomSearch.Types
         , Component(..)
         )
 import CustomSearch.Attributes exposing (Attributes)
-import Decode exposing (decoder)
-import Encode exposing (componentEncoder)
+import CustomSearch.Decode exposing (decoder)
+import CustomSearch.Encode exposing (componentEncoder)
 
 
 {-| Load a CSE script
