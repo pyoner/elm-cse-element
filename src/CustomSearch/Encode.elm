@@ -2,8 +2,12 @@ module CustomSearch.Encode exposing (componentEncoder)
 
 import Json.Encode exposing (Value, string, null, object, list)
 import Json.Bidirectional as Json
+
+
+--local
+
 import CustomSearch.Types exposing (Component(..), Config)
-import CustomSearch.Attributes exposing (Attributes)
+import CustomSearch.Attributes exposing (Attributes, Attribute(Gname))
 import CustomSearch.Codec exposing (attributesCoder)
 
 
@@ -11,23 +15,40 @@ componentEncoder : Component -> Attributes -> Value
 componentEncoder component attrs =
     let
         base =
-            { attributes = attrs, gname = "", tag = "", div = "" }
+            { attributes = [], gname = "", tag = "", div = "" }
 
-        ( config, optConfig ) =
+        ( gname, baseConfig, baseOptConfig ) =
             case component of
                 Search gname id ->
-                    ( { base | gname = gname, div = id, tag = "search" }, Nothing )
+                    ( gname, { base | div = id, tag = "search" }, Nothing )
 
                 SearchBoxResults gname ( id, optId ) ->
-                    ( { base | gname = gname, div = id, tag = "searchbox" }
+                    ( gname
+                    , { base | div = id, tag = "searchbox" }
                     , Just { base | div = optId, tag = "searchresults" }
                     )
 
                 SearchBoxOnly gname id ->
-                    ( { base | gname = gname, div = id, tag = "searchbox-only" }, Nothing )
+                    ( gname, { base | div = id, tag = "searchbox-only" }, Nothing )
 
                 SearchResultsOnly gname id ->
-                    ( { base | gname = gname, div = id, tag = "searchresults-only" }, Nothing )
+                    ( gname, { base | div = id, tag = "searchresults-only" }, Nothing )
+
+        --add gname to config and optConfig
+        attributes =
+            attrs ++ [ Gname gname ]
+
+        config =
+            { baseConfig | gname = gname, attributes = attributes }
+
+        optConfig =
+            (case baseOptConfig of
+                Just opt ->
+                    Just { opt | gname = gname, attributes = attributes }
+
+                Nothing ->
+                    Nothing
+            )
     in
         list <|
             [ configEncoder config ]
