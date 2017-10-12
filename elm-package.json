@@ -1,15 +1,21 @@
 {
     "version": "2.0.0",
-    "summary": "helpful summary of your project, less than 80 characters",
-    "repository": "https://github.com/user/project.git",
-    "license": "BSD3",
+    "summary": "Google Custom Search Element API",
+    "repository": "https://github.com/pyoner/elm-google-custom-search-element.git",
+    "license": "MIT",
     "source-directories": [
         "src"
     ],
-    "exposed-modules": [],
+    "exposed-modules": [
+        "CustomSearch.Element",
+        "CustomSearch.Attributes",
+        "CustomSearch.Types",
+        "CustomSearch.Codec",
+        "CustomSearch.Encode",
+        "CustomSearch.Decode"
+    ],
     "dependencies": {
         "elm-lang/core": "5.0.0 <= v < 6.0.0",
-        "elm-lang/html": "2.0.0 <= v < 3.0.0",
         "jamesmacaulay/elm-json-bidirectional": "1.1.0 <= v < 2.0.0"
     },
     "elm-version": "0.18.0 <= v < 0.19.0"
