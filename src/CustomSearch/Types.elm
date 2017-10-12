@@ -3,10 +3,6 @@ module CustomSearch.Types exposing (..)
 import CustomSearch.Attributes exposing (Attributes)
 
 
-type alias Gname =
-    String
-
-
 type Component
     = Search Gname ElementId
     | SearchBoxResults Gname ( ElementId, ElementId )
@@ -23,6 +19,10 @@ type Event
     | InputQuery QueryResult
     | Clear (Result Error ElementId)
     | DecodeError Error
+
+
+type alias Gname =
+    String
 
 
 type alias Cx =

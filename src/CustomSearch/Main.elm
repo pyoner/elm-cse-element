@@ -1,4 +1,4 @@
-module Main exposing (..)
+module CustomSearch.Main exposing (..)
 
 import Html exposing (Html, text, div, img, button, select, option, input)
 import Html.Attributes
@@ -16,9 +16,9 @@ import Json.Decode as Decode
 
 --local import
 
-import Element
-import Types
-import Attributes.Types as ATypes exposing (general, attributes)
+import CustomSearch.Element as Element
+import CustomSearch.Types as Types
+import CustomSearch.Attributes as Attributes
 
 
 ---- MODEL ----
@@ -29,23 +29,23 @@ cseId =
     "010757224930445905488:hydkhs9fcca"
 
 
-cseElementId : String
+cseElementId : Types.ElementId
 cseElementId =
     "search-cse"
 
 
-cseOptElementId : String
+cseOptElementId : Types.ElementId
 cseOptElementId =
     "search-cse-opt"
 
 
-cseGname : ATypes.Gname
+cseGname : Types.Gname
 cseGname =
     "test"
 
 
 type alias Item =
-    ( Types.Component, ATypes.Attributes, String )
+    ( Types.Component, Attributes.Attributes, String )
 
 
 type alias Items =
@@ -55,7 +55,7 @@ type alias Items =
 type alias Model =
     { cseIsReady : Bool
     , cseIsRendred : Bool
-    , selected : ATypes.Gname
+    , selected : Types.Gname
     , items : Items
     , query : String
     }
@@ -68,32 +68,28 @@ init =
       , selected = "search"
       , query = ""
       , items =
-            [ ( Types.Search cseElementId
-              , { attributes
-                    | general =
-                        { general | gname = "search" }
-                }
+            [ ( Types.Search
+                    "search"
+                    cseElementId
+              , []
               , "Search component"
               )
-            , ( Types.SearchBoxResults ( cseElementId, cseOptElementId )
-              , { attributes
-                    | general =
-                        { general | gname = "searchBoxResults" }
-                }
+            , ( Types.SearchBoxResults
+                    "searchBoxResults"
+                    ( cseElementId, cseOptElementId )
+              , []
               , "Search box and results component"
               )
-            , ( Types.SearchBoxOnly cseElementId
-              , { attributes
-                    | general =
-                        { general | gname = "searchBoxOnly" }
-                }
+            , ( Types.SearchBoxOnly
+                    "searchBoxOnly"
+                    cseElementId
+              , []
               , "Search box only component"
               )
-            , ( Types.SearchResultsOnly cseOptElementId
-              , { attributes
-                    | general =
-                        { general | gname = "searchResultsOnly" }
-                }
+            , ( Types.SearchResultsOnly
+                    "searchResultsOnly"
+                    cseOptElementId
+              , []
               , "Search results only component"
               )
             ]
@@ -111,20 +107,36 @@ type Msg
     | CseReady Bool
     | CseRender
     | ElementEvent Types.Event
-    | GnameSelected ATypes.Gname
+    | GnameSelected Types.Gname
     | Search
     | Query String
     | ClearAllResults
 
 
-getSelectedItem : ATypes.Gname -> Items -> Maybe Item
+componentGetGname : Types.Component -> Types.Gname
+componentGetGname component =
+    case component of
+        Types.Search a _ ->
+            a
+
+        Types.SearchBoxResults a _ ->
+            a
+
+        Types.SearchBoxOnly a _ ->
+            a
+
+        Types.SearchResultsOnly a _ ->
+            a
+
+
+getSelectedItem : Types.Gname -> Items -> Maybe Item
 getSelectedItem gname items =
     case List.head items of
         Nothing ->
             Nothing
 
         Just ( component, attrs, description ) ->
-            if attrs.general.gname == gname then
+            if componentGetGname component == gname then
                 Just ( component, attrs, description )
             else
                 case List.tail items of
@@ -235,13 +247,17 @@ view model =
           <|
             List.map
                 (\( component, attrs, description ) ->
-                    option
-                        [ value attrs.general.gname
-                        , selected (model.selected == attrs.general.gname)
-                        ]
-                        [ text
-                            description
-                        ]
+                    let
+                        gname =
+                            componentGetGname component
+                    in
+                        option
+                            [ value gname
+                            , selected (model.selected == gname)
+                            ]
+                            [ text
+                                description
+                            ]
                 )
                 model.items
         , button
