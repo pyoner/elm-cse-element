@@ -1,4 +1,4 @@
-module CustomSearch.Main exposing (..)
+module Main exposing (..)
 
 import Html exposing (Html, text, div, img, button, select, option, input)
 import Html.Attributes
