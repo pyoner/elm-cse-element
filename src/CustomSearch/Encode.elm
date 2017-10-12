@@ -63,9 +63,10 @@ componentEncoder component attrs =
 
 
 configEncoder : Config -> Value
-configEncoder { div, tag, attributes } =
+configEncoder { div, tag, gname, attributes } =
     object
         [ ( "div", string div )
         , ( "tag", string tag )
+        , ( "gname", string gname )
         , ( "attributes", attributes |> Json.encodeValue attributesCoder )
         ]
