@@ -1,16 +1,19 @@
 {
     "version": "2.0.0",
-    "summary": "Example of Custom Search Element",
-    "repository": "https://github.com/user/project.git",
-    "license": "BSD3",
+    "summary": "Example of Google Custom Search Element API",
+    "repository": "https://github.com/pyoner/elm-google-custom-search-element.git",
+    "license": "MIT",
     "source-directories": [
-        "../src",
         "src"
     ],
     "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "5.0.0 <= v < 6.0.0",
-        "elm-lang/html": "2.0.0 <= v < 3.0.0"
+        "elm-lang/html": "2.0.0 <= v < 3.0.0",
+        "pyoner/elm-google-custom-search-element": "2.0.0 <= v 3.0.0"
+    },
+    "dependency-sources":{
+        "pyoner/elm-google-custom-search-element": "../"
     },
     "elm-version": "0.18.0 <= v < 0.19.0"
 }
