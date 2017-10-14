@@ -1,8 +1,14 @@
 module CustomSearch.Types exposing (..)
 
+{-| Types
+@docs Component, Gname, Cx, ElementId, Query, Config
+-}
+
 import CustomSearch.Attributes exposing (Attributes)
 
 
+{-| Component
+-}
 type Component
     = Search Gname ElementId
     | SearchBoxResults Gname ( ElementId, ElementId )
@@ -10,25 +16,20 @@ type Component
     | SearchResultsOnly Gname ElementId
 
 
-type Event
-    = Load (Result Error Cx)
-    | Render GnameResult
-    | ClearAllResults GnameResult
-    | Execute QueryResult
-    | PrefillQuery QueryResult
-    | InputQuery QueryResult
-    | Clear (Result Error ElementId)
-    | DecodeError Error
-
-
+{-| Gname
+-}
 type alias Gname =
     String
 
 
+{-| Cx
+-}
 type alias Cx =
     String
 
 
+{-| Config
+-}
 type alias Config =
     { div : ElementId
     , tag : String
@@ -37,21 +38,13 @@ type alias Config =
     }
 
 
-type alias Error =
-    String
-
-
-type alias QueryResult =
-    Result Error ( Gname, Query )
-
-
-type alias GnameResult =
-    Result String Gname
-
-
+{-| ElementId
+-}
 type alias ElementId =
     String
 
 
+{-| Query
+-}
 type alias Query =
     String

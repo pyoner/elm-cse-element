@@ -1,23 +1,39 @@
 module CustomSearch.Attributes exposing (..)
 
+{-| Attributes
+# Types
+@docs MatchType, RefStyle, ImageLayout, Size, Safe
 
+# Attributes
+@docs Attribute, Attributes
+-}
+
+
+{-| MatchType
+-}
 type MatchType
     = Any
     | Ordered
     | Prefix
 
 
+{-| RefStyle
+-}
 type RefStyle
     = Tab
     | Link
 
 
+{-| ImageLayout
+-}
 type ImageLayout
     = Classic
     | Column
     | Popup
 
 
+{-| Size
+-}
 type Size
     = Large
     | Small
@@ -25,6 +41,8 @@ type Size
     | SizeInt Int
 
 
+{-| Safe
+-}
 type Safe
     = Moderate
     | Off
@@ -35,10 +53,14 @@ type Safe
 -- Attributes
 
 
+{-| Attributes
+-}
 type alias Attributes =
     List Attribute
 
 
+{-| Attribute
+-}
 type Attribute
     = Gname String
     | AutoSearchOnLoad Bool

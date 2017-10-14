@@ -1,4 +1,8 @@
-module CustomSearch.Codec exposing (..)
+module CustomSearch.Codec exposing (attributesCoder)
+
+{-| Codec
+@docs attributesCoder
+-}
 
 import Json.Decode as Decode
 import Json.Bidirectional as Json
@@ -668,6 +672,8 @@ objectToAttributes =
         |> Decode.andThen (\list -> Decode.succeed list)
 
 
+{-| attributesCoder
+-}
 attributesCoder : Json.Coder Attributes
 attributesCoder =
     Json.custom attributesToValue objectToAttributes

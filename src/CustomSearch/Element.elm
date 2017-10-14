@@ -1,7 +1,6 @@
-port module CustomSearch.Element
+module CustomSearch.Element
     exposing
         ( load
-        , listen
         , render
         , execute
         , prefillQuery
@@ -10,82 +9,79 @@ port module CustomSearch.Element
         , clear
         )
 
-import Json.Decode as Decode
-import Json.Encode as Encode
+{-| Element
+@docs load, render, execute, prefillQuery, getInputQuery, clearAllResults, clear
+-}
+
+import Task
 
 
 --local import
 
+import Native.Element
 import CustomSearch.Types
     exposing
         ( Cx
         , Query
         , Gname
-        , Event(DecodeError)
         , ElementId
         , Component(..)
         )
 import CustomSearch.Attributes exposing (Attributes)
-import CustomSearch.Decode exposing (decoder)
 import CustomSearch.Encode exposing (componentEncoder)
 
 
 {-| Load a CSE script
 -}
-port load : Cx -> Cmd msg
-
-
-port render_ : Encode.Value -> Cmd msg
+load : (Result a b -> msg) -> Cx -> Cmd msg
+load tagger cx =
+    Task.attempt tagger <|
+        Native.Element.load cx
 
 
 {-| Renders a CSE element
 -}
-render : Component -> Attributes -> Cmd msg
-render component attrs =
-    render_ (componentEncoder component attrs)
+render : (Result a b -> msg) -> Component -> Attributes -> Cmd msg
+render tagger component attrs =
+    Task.attempt tagger <|
+        Native.Element.render (componentEncoder component attrs)
 
 
 {-| Executes a programmatic query
 -}
-port execute : ( Gname, Query ) -> Cmd msg
+execute : (Result a b -> msg) -> ( Gname, Query ) -> Cmd msg
+execute tagger a =
+    Task.attempt tagger <|
+        Native.Element.execute a
 
 
 {-| Prefills the searchbox with a query string without executing the query
 -}
-port prefillQuery : ( Gname, Query ) -> Cmd msg
+prefillQuery : (Result a b -> msg) -> ( Gname, Query ) -> Cmd msg
+prefillQuery tagger a =
+    Task.attempt tagger <|
+        Native.Element.prefillQuery a
 
 
 {-| Gets the current value displayed in the input box
 -}
-port getInputQuery : Gname -> Cmd msg
+getInputQuery : (Result a b -> msg) -> Gname -> Cmd msg
+getInputQuery tagger gname =
+    Task.attempt tagger <|
+        Native.Element.getInputQuery gname
 
 
 {-| Clears the control by hiding everything but the search box, if any
 -}
-port clearAllResults : Gname -> Cmd msg
+clearAllResults : (Result a b -> msg) -> Gname -> Cmd msg
+clearAllResults tagger gname =
+    Task.attempt tagger <|
+        Native.Element.clearAllResults gname
 
 
 {-| Clear dom by element id
 -}
-port clear : String -> Cmd msg
-
-
-
--- Subscriptions
-
-
-port event : (Decode.Value -> msg) -> Sub msg
-
-
-listen : (Event -> msg) -> Sub msg
-listen tagger =
-    event
-        (\v ->
-            tagger <|
-                case (Decode.decodeValue decoder v) of
-                    Ok event ->
-                        event
-
-                    Err err ->
-                        DecodeError err
-        )
+clear : (Result a b -> msg) -> ElementId -> Cmd msg
+clear tagger elementId =
+    Task.attempt tagger <|
+        Native.Element.clear elementId

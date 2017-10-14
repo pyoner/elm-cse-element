@@ -1,5 +1,9 @@
 module CustomSearch.Encode exposing (componentEncoder)
 
+{-| Encode
+@docs componentEncoder
+-}
+
 import Json.Encode exposing (Value, string, null, object, list)
 import Json.Bidirectional as Json
 
@@ -11,6 +15,8 @@ import CustomSearch.Attributes exposing (Attributes, Attribute(Gname))
 import CustomSearch.Codec exposing (attributesCoder)
 
 
+{-| componentEncoder
+-}
 componentEncoder : Component -> Attributes -> Value
 componentEncoder component attrs =
     let

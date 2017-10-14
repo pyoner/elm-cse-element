@@ -3,6 +3,7 @@
     "summary": "Google Custom Search Element API",
     "repository": "https://github.com/pyoner/elm-google-custom-search-element.git",
     "license": "MIT",
+    "native-modules": true,
     "source-directories": [
         "src"
     ],
